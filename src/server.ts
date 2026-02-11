@@ -1,10 +1,18 @@
 import express, { Application, Request, Response } from "express";
-
-const app: Application = express();
-const port = 5000; 
+import app from "./app";
 
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+const port = process.env.PORT || 5000;
+
+
+const boostrap = () => {
+    try {
+        app.listen(port, () => {
+            console.log(`Server is running on http://localhost:${port}`);
+        });
+
+    } catch (error) {
+        console.log("Failed  to start server : ", error);
+    }
+}
+boostrap();
