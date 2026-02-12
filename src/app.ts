@@ -1,4 +1,5 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application } from "express";
+import { SpecialityRouter } from "./app/module/speciality/speciality.router";
 
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }));
@@ -6,8 +7,8 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Basic route
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, TypeScript + Express!');
+app.use("/api/v1/specialities", SpecialityRouter)
+app.get('/', (req, res) => {
+    res.send("Ph Healthcare successfully running")
 });
 export default app;
