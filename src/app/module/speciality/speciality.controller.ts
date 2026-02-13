@@ -19,6 +19,24 @@ const createSpeciality = async (req: Request, res: Response) => {
 
     }
 }
+const getSpeciality = async (req: Request, res: Response) => {
+    try {
+
+        const result = await SpecialityController.createSpeciality();
+        res.status(200).json({
+            success: true,
+            message: "Successfully fetch",
+            data: result
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Speciality fetch failed ",
+            error: error instanceof Error ? error.message : "unknown error "
+        })
+    }
+}
 export const SpecialityController = {
-    createSpeciality
+    createSpeciality,
+    getSpeciality
 }
