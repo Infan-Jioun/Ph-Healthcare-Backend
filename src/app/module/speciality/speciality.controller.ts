@@ -22,7 +22,7 @@ const createSpeciality = async (req: Request, res: Response) => {
 const getSpeciality = async (req: Request, res: Response) => {
     try {
 
-        const result = await SpecialityController.createSpeciality();
+        const result = await specialityService.getSpeciality();
         res.status(200).json({
             success: true,
             message: "Successfully fetch",
@@ -39,7 +39,7 @@ const getSpeciality = async (req: Request, res: Response) => {
 const deleteSpeaciality = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const result = await SpecialityController.deleteSpeaciality(id as string);
+        const result = await specialityService.deleteSpeaciality(id as string);
         res.status(200).json({
             success: true,
             message: "Successfully deleted Speaciality",
