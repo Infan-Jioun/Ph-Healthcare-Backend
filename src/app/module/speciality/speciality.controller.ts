@@ -36,6 +36,24 @@ const getSpeciality = async (req: Request, res: Response) => {
         })
     }
 }
+const updateSpeaciality = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title } = req.body;
+        const result = await specialityService.updateSpeaciality(id as string, title as string);
+        res.status(200).json({
+            success: true,
+            message: "successfully  update",
+            data: result
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "update failed",
+            error: error instanceof Error ? error.message : "unknown error"
+        })
+    }
+}
 const deleteSpeaciality = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -56,5 +74,6 @@ const deleteSpeaciality = async (req: Request, res: Response) => {
 export const SpecialityController = {
     createSpeciality,
     getSpeciality,
-    deleteSpeaciality
+    deleteSpeaciality,
+    updateSpeaciality
 }
