@@ -36,7 +36,25 @@ const getSpeciality = async (req: Request, res: Response) => {
         })
     }
 }
+const deleteSpeaciality = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const result = await SpecialityController.deleteSpeaciality(id as string);
+        res.status(200).json({
+            success: true,
+            message: "Successfully deleted Speaciality",
+            data: result
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Deleted failed",
+            error: error instanceof Error ? error.message : "unknown error"
+        })
+    }
+}
 export const SpecialityController = {
     createSpeciality,
-    getSpeciality
+    getSpeciality,
+    deleteSpeaciality
 }
