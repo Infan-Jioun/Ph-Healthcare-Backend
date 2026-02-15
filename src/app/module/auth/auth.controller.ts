@@ -10,7 +10,7 @@ const registerPatient = catchAsync(
         sendResposne(res, {
             httpStatusCode: 201,
             success: true,
-            message: "Parient Successfully Register",
+            message: "Patient Successfully Register",
             data: result
         })
     }
