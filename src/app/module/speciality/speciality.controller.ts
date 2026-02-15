@@ -1,14 +1,28 @@
 import { Request, Response } from "express";
 import { specialityService } from "./speciality.service";
 import { catchAsync } from "../../../shared/catchAsync";
-
+interface IResponseData<T> {
+    httpStatusCode: number
+    success: boolean
+    message: string
+    data?: T
+}
+const sendResposne = <T>(res: Response, responseData: IResponseData<T>) => {
+    const { httpStatusCode, message, success, data } = responseData;
+    res.status(httpStatusCode).json({
+        success,
+        message,
+        data
+    })
+}
 const createSpeciality = catchAsync(
     async (req: Request, res: Response) => {
         const payload = req.body;
         const result = await specialityService.createSpeciality(payload);
-        res.status(200).json({
+        sendResposne(res, {
+            httpStatusCode: 201,
             success: true,
-            message: "Speciality Created Successfully ",
+            message: "Successfully Created Speacilatics",
             data: result
         })
     }
