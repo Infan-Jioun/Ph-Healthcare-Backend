@@ -1,13 +1,10 @@
 import app from "./app";
-
-
-const port = process.env.PORT || 5000;
-
+import { envVars } from "./config/env";
 
 const boostrap = () => {
     try {
-        app.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
+        app.listen(envVars.PORT, () => {
+            console.log(`Server is running on http://localhost:${envVars.PORT}`);
         });
 
     } catch (error) {

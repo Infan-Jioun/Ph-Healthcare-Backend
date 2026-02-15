@@ -11,6 +11,6 @@ app.use(express.json());
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/specialities", SpecialityRouter)
 app.get('/', (req, res) => {
-    res.send("Ph Healthcare successfully running")
+res.send("Ph Healthcare successfully running")
 });
 export default app;
