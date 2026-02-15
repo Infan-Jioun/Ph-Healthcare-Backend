@@ -1,4 +1,5 @@
 
+import { Status } from "../../../generated/prisma/enums";
 import { auth } from "../../lib/auth";
 
 interface IRegisterPatiendPayload {
@@ -23,6 +24,29 @@ const registerPatient = async (payload: IRegisterPatiendPayload) => {
     //  })
     return data
 }
+interface ILoginPatient {
+    email: string
+    password: string
+}
+const loginPatient = async (payload: ILoginPatient) => {
+    const { email, password } = payload;
+    const data = await auth.api.signInEmail({
+        body: {
+            email, password
+        }
+    })
+    if (!data.user) {
+        throw new Error("You are not Patient")
+    }
+    if (data.user.status === Status.BLOCKED) {
+        throw new Error("Patient is Blooked")
+    }
+    if (data.user.isDeleted || data.user.status === Status.DELETED) {
+        throw new Error("Patient is Deleted")
+    }
+    return data
+}
 export const authService = {
-    registerPatient
+    registerPatient,
+    loginPatient
 }
