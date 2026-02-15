@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { specialityService } from "./speciality.service";
 
 const createSpeciality = async (req: Request, res: Response) => {
@@ -19,23 +19,30 @@ const createSpeciality = async (req: Request, res: Response) => {
 
     }
 }
-const getSpeciality = async (req: Request, res: Response) => {
-    try {
-
+//* async function 
+const catchAsync = (fn: RequestHandler) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await fn(req, res, next)
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Speciality fetch failed ",
+                error: error instanceof Error ? error.message : "unknown error "
+            })
+        }
+    }
+}
+const getSpeciality = catchAsync(
+    async (req: Request, res: Response) => {
         const result = await specialityService.getSpeciality();
         res.status(200).json({
             success: true,
-            message: "Successfully fetch",
+            message: "Specilaties Fetch Success",
             data: result
         })
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Speciality fetch failed ",
-            error: error instanceof Error ? error.message : "unknown error "
-        })
     }
-}
+)
 const updateSpeaciality = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
