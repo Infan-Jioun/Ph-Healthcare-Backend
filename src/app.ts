@@ -1,6 +1,8 @@
 import express, { Application } from "express";
 import { SpecialityRouter } from "./app/module/speciality/speciality.router";
 import { authRouter } from "./app/module/auth/auth.router";
+import { globalErrorHandlar } from "./middleware/globalHandleError";
+import { notFound } from "./middleware/notFound";
 
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }));
@@ -11,6 +13,8 @@ app.use(express.json());
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/specialities", SpecialityRouter)
 app.get('/', (req, res) => {
-res.send("Ph Healthcare successfully running")
+    res.send("Ph Healthcare successfully running")
 });
+app.use(globalErrorHandlar)
+app.use(notFound)
 export default app;

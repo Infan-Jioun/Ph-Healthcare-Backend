@@ -2,7 +2,7 @@
 import { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env";
 
-export const globalError = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const globalErrorHandlar = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (envVars.NODE_ENV === "development") {
         console.log("Error from global error Handler", err);
     }
