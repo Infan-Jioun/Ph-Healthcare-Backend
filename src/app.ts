@@ -3,6 +3,7 @@ import { SpecialityRouter } from "./app/module/speciality/speciality.router";
 import { authRouter } from "./app/module/auth/auth.router";
 import { globalErrorHandlar } from "./middleware/globalHandleError";
 import { notFound } from "./middleware/notFound";
+import { userRouter } from "./app/module/user/user.router";
 
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }));
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/specialities", SpecialityRouter)
+app.use("/api/v1/doctors", userRouter)
 app.get('/', (req, res) => {
     res.send("Ph Healthcare successfully running")
 });
