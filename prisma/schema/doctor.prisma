@@ -1,0 +1,17 @@
+model Doctor {
+    id                 String    @id @default(ulid())
+    name               String
+    email              String    @unique
+    profilePhoto       String?
+    contactNumber      String?
+    address            String?
+    isDeleted          Boolean   @default(false)
+    deletedAt          DateTime?
+    registrationNumber String    @unique
+    expreience         Int       @default(0)
+    gender         
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+
+    @@map("doctor")
+}
