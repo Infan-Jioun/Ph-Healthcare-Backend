@@ -18,8 +18,12 @@ model Doctor {
     updatedAt          DateTime  @updatedAt
 
     //* relations
-    userId String @unique
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId     String             @unique
+    user       User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    // doctorSpeciality DoctorSpeciality[]
+    speciality DoctorSpeciality[]
 
+    @@index([email], name: "idx_doctor_email")
+    @@index([isDeleted], name: "is_Doctor_deleted")
     @@map("doctor")
 }
