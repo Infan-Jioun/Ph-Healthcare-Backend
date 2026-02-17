@@ -25,7 +25,8 @@ router.post("/create-doctor", (req: Request, res: Response, next: NextFunction) 
     if (!parsedResult.success) {
         next(parsedResult.error)
     }
+    // *sanitizing the data
     req.body = parsedResult.data;
-
+    next();
 }, userContoller.createDoctor)
 export const userRouter: Router = router;
