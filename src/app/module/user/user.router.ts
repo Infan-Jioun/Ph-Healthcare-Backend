@@ -1,7 +1,8 @@
-import express, { NextFunction, Request, Response, Router } from "express";
+import express, { Router } from "express";
 import { userContoller } from "./user.controller";
 import z from "zod";
 import { Gender } from "../../../generated/prisma/enums";
+import { validateRequest } from "../../../middleware/validateRequest";
 const router = express.Router();
 const createDoctorZodSchema = z.object({
     password: z.string("Password is required").min(6, "Password must be at least 6 characters").max(20, "Password must be at most 20 characters "),
@@ -20,13 +21,16 @@ const createDoctorZodSchema = z.object({
     specialities: z.array(z.uuid(), "Specialities must be an array of strnigs ").min(1, "At least one Specialities is required")
 
 })
-router.post("/create-doctor", (req: Request, res: Response, next: NextFunction) => {
-    const parsedResult = createDoctorZodSchema.safeParse(req.body);
-    if (!parsedResult.success) {
-        next(parsedResult.error)
-    }
-    // *sanitizing the data
-    req.body = parsedResult.data;
-    next();
-}, userContoller.createDoctor)
+router.post("/create-doctor",
+    validateRequest(createDoctorZodSchema)
+    //     (req: Request, res: Response, next: NextFunction) => {
+    //     const parsedResult = createDoctorZodSchema.safeParse(req.body);
+    //     if (!parsedResult.success) {
+    //         next(parsedResult.error)
+    //     }
+    //     // *sanitizing the data
+    //     req.body = parsedResult.data;
+    //     next();
+    // }, 
+    , userContoller.createDoctor)
 export const userRouter: Router = router;
