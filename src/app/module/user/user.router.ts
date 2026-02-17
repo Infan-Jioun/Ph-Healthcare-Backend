@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express, { NextFunction, Request, Response, Router } from "express";
 import { userContoller } from "./user.controller";
 import z from "zod";
 import { Gender } from "../../../generated/prisma/enums";
@@ -17,8 +17,15 @@ const createDoctorZodSchema = z.object({
         currentWorkingPlace: z.string("Current working place is required").min(2, "Current working place must be ar least 2 chracters"),
         designation: z.string("Designation is required").min(2, "Designation must be at least 2 chracters ").max(50, "Designation must be at most 50 characters")
     }),
-    speciality: z.array(z.uuid(), "Speciality must be an array of strnigs ").min(1, "At least one Speciality is required")
+    specialities: z.array(z.uuid(), "Specialities must be an array of strnigs ").min(1, "At least one Specialities is required")
 
 })
-router.post("/create-doctor", userContoller.createDoctor)
+router.post("/create-doctor", (req: Request, res: Response, next: NextFunction) => {
+    const parsedResult = createDoctorZodSchema.safeParse(req.body);
+    if (!parsedResult.success) {
+        next(parsedResult.error)
+    }
+    req.body = parsedResult.data;
+
+}, userContoller.createDoctor)
 export const userRouter: Router = router;
