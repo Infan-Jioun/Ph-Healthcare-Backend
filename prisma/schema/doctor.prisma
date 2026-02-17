@@ -8,7 +8,7 @@ model Doctor {
     isDeleted           Boolean   @default(false)
     deletedAt           DateTime?
     registrationNumber  String    @unique
-    expreience          Int       @default(0)
+    experience          Int       @default(0)
     gender              Gender
     appointmentFee     Float
     qualification       String

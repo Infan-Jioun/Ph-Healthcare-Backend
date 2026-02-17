@@ -150,7 +150,7 @@ export const DoctorScalarFieldEnum = {
   isDeleted: 'isDeleted',
   deletedAt: 'deletedAt',
   registrationNumber: 'registrationNumber',
-  expreience: 'expreience',
+  experience: 'experience',
   gender: 'gender',
   appointmentFee: 'appointmentFee',
   qualification: 'qualification',
