@@ -15,6 +15,17 @@ const getAllDoctor = async () => {
     return doctors
 
 }
+const getDoctorById = async (id: string) => {
+
+    const doctor = await prisma.doctor.findFirst({
+        where: {
+            id,
+        }
+
+    })
+    return doctor
+}
 export const doctorService = {
-    getAllDoctor
+    getAllDoctor,
+    getDoctorById
 }
