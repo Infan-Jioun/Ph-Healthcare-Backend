@@ -5,6 +5,7 @@ import z from "zod";
 import status from "http-status";
 import { TErrorResponce, TErrorSource } from "../app/interface/error.interface";
 import { handelZodError } from "../app/errorHelper/handelZodError";
+import AppError from "../app/errorHelper/appError";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -23,10 +24,29 @@ export const globalErrorHandlar = (err: any, req: Request, res: Response, next: 
         errorSource = [...(simplifiedError.errorSource ?? [])];
         stack = err.stack;
 
-    } else if (err instanceof Error) {
+    } else if (err instanceof AppError) {
+        statusCode = err.statusCode;
+        message = err.message;
+        stack = err.stack;
+        errorSource = [
+            {
+                path: "",
+                message: err.message
+            }
+        ]
+
+
+    }
+    else if (err instanceof Error) {
         statusCode = status.INTERNAL_SERVER_ERROR;
         message = err.message;
         stack = err.stack;
+        errorSource = [
+            {
+                path: "",
+                message: err.message
+            }
+        ]
     }
     const errorResponse: TErrorResponce = {
         success: false,

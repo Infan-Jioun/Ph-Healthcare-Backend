@@ -1,5 +1,7 @@
 import { prisma } from "../../lib/prisma"
 import { IUpdateDoctorPayload } from "./doctor.interface"
+import AppError from "../../errorHelper/appError"
+import status from "http-status"
 
 const getAllDoctor = async () => {
     const doctors = await prisma.doctor.findMany({
@@ -36,7 +38,7 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
         },
     })
     if (!existingData) {
-        throw new Error("Doctor not found")
+        throw new AppError(status.NOT_FOUND, "Doctor not found")
     }
     const doctor = await prisma.doctor.update({
         where: { id },
@@ -50,7 +52,7 @@ const deleteDoctor = async (id: string) => {
         where: { id }
     })
     if (!existingData) {
-        throw new Error("Doctor not found")
+        throw new AppError(status.NOT_FOUND, "Doctor not found")
     }
     const result = await prisma.doctor.update({
         where: { id },
