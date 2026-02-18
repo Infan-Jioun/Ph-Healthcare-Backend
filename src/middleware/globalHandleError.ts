@@ -1,23 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env";
+import z from "zod";
+import status from "http-status";
+import { TErrorResponce, TErrorSource } from "../app/interface/error.interface";
 
-interface TErrorSource {
-    path: string,
-    messga: string
-}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const globalErrorHandlar = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (envVars.NODE_ENV === "development") {
         console.log("Error from global error Handler", err);
     }
     const errorSource: TErrorSource[] = []
-    const statusCode: number = 500;
-    const message: string = "Internal server error ";
-    res.status(statusCode).json({
+    let statusCode: number = status.INTERNAL_SERVER_ERROR;
+    let message: string = "Internal server error ";
+    if (err instanceof z.ZodError) {
+        statusCode = status.BAD_REQUEST;
+        message = "Zod Validation Error";
+        err.issues.forEach(issue => {
+            errorSource.push({
+                path: issue.path.join(" => ") || "unknown",
+                message: issue.message
+            })
+        })
+    }
+    const errorResponse: TErrorResponce = {
         success: false,
         message: message,
-        error: err.message
-    })
-    next();
+        errorSource,
+        error: envVars.NODE_ENV === "development" ? err : undefined
+    }
+    res.status(statusCode).json(errorResponse)
+
 }
 
