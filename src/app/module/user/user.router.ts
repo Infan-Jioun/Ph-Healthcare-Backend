@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { userContoller } from "./user.controller";
 import { validateRequest } from "../../../middleware/validateRequest";
-import { createDoctorZodSchema } from "./user.validation";
+import { createAdminValidationSchema, createDoctorZodSchema, createSuperAdminValidationSchema } from "./user.validation";
 const router = express.Router();
 
 router.post("/create-doctor",
@@ -16,5 +16,7 @@ router.post("/create-doctor",
     //     next();
     // }, 
     , userContoller.createDoctor);
-router.post("/create-admin", userContoller.createAdmin)
+router.post("/create-admin", validateRequest(createAdminValidationSchema), userContoller.createAdmin)
+router.post("/create-super-admin", validateRequest(createSuperAdminValidationSchema), userContoller.createSuperAdmin)
+
 export const userRouter: Router = router;

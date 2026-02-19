@@ -29,3 +29,12 @@ export interface ICreateAdmin {
         contactNumber: string;
     };
 }
+export interface ICreateSuperAdmin {
+    password: string;
+    superAdmin: {
+        name: string;
+        email: string;
+        profilePhoto?: string;
+        contactNumber: string;
+    };
+}
