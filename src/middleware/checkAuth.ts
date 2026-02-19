@@ -5,7 +5,7 @@ import AppError from "../app/errorHelper/appError";
 import status from "http-status";
 import { prisma } from "../app/lib/prisma";
 
-export const checkAuth = (...authRols: Role) => async (req: Request, res: Response, next: NextFunction) => {
+export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Response, next: NextFunction) => {
     try {
         // * userChecker  or session checker
         const sessionToken = cookieUtils.getCookie(req, "better-auth-session_token");
@@ -47,6 +47,7 @@ export const checkAuth = (...authRols: Role) => async (req: Request, res: Respon
                 if (authRols.length > 0 && !authRols.includes(user.role as Role)) {
                     throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
                 }
+                return next()
             }
         }
     } catch (error) {
