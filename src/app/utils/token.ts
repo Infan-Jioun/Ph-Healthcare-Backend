@@ -1,6 +1,9 @@
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "./jwt";
 import { envVars } from "../../config/env";
+import { cookieUtils } from "./cookie";
+import { Response } from "express";
+import ms from "ms";
 
 const getAccessToken = (payload: JwtPayload) => {
     const accessToken = jwtUtils.createToken(
@@ -19,7 +22,19 @@ const getRefreshToken = (payload: JwtPayload) => {
     )
     return refreshToken
 }
+const setAccessTokenCookie = (res: Response, token: string) => {
+    const maxAge = ms(Number(envVars.ACCESS_TOKEN_EXPIRES_IN))
+    cookieUtils.setCookie(res, "accessToken", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+        maxAge: Number(maxAge)
+
+    })
+}
 export const tokenUtils = {
     getAccessToken,
-    getRefreshToken
+    getRefreshToken,
+    setAccessTokenCookie
 }
