@@ -39,7 +39,10 @@ export const checkAuth = (...authRols: Role) => async (req: Request, res: Respon
                     console.log("Session Expiring soon!!");
                 }
                 if (user.status === Status.BLOCKED || user.status === Status.DELETED) {
-                    throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! User is not activ")
+                    throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! User is not active")
+                }
+                if (user.isDeleted) {
+                    throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! User is deleted")
                 }
             }
         }
