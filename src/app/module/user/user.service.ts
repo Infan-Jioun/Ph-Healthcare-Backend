@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import status from "http-status";
 import { Role, Speciality } from "../../../generated/prisma/client";
@@ -139,11 +140,46 @@ const createAdmin = async (payload: ICreateAdmin) => {
         const result = await prisma.$transaction(async (tx) => {
             // ! Create admin recored
             const admin = await tx.admin.create({
-               data: {
-                userId : 
-               }
+                data: {
+                    userId: userData.user.id,
+                    name: payload.admin.name,
+                    email: payload.admin.email,
+                    role: userData.user.role as Role,
+                    profilePhoto: payload.admin.profilePhoto,
+                    contactNumber: payload.admin.contactNumber
+                }
             })
+            console.log(admin);
+            //! Fetch created admin with user data
+            const createAdmin = await tx.admin.findUnique({
+                where: {
+                    id: admin.id
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    profilePhoto: true,
+                    contactNumber: true,
+                    isDeleted: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                            role: true,
+                            status: true
+                        }
+                    }
+                }
+
+            })
+
+            return createAdmin
         })
+        return result
     } catch (error) {
         //! Deleted user
         await prisma.user.delete({
@@ -156,5 +192,6 @@ const createAdmin = async (payload: ICreateAdmin) => {
 }
 
 export const userService = {
-    createDoctor
+    createDoctor,
+    createAdmin
 }
