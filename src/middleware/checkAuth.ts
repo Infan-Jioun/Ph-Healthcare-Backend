@@ -44,6 +44,9 @@ export const checkAuth = (...authRols: Role) => async (req: Request, res: Respon
                 if (user.isDeleted) {
                     throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! User is deleted")
                 }
+                if (authRols.length > 0 && !authRols.includes(user.role as Role)) {
+                    throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
+                }
             }
         }
     } catch (error) {
