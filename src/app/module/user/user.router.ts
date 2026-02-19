@@ -15,5 +15,6 @@ router.post("/create-doctor",
     //     req.body = parsedResult.data;
     //     next();
     // }, 
-    , userContoller.createDoctor)
+    , userContoller.createDoctor);
+router.post("/create-admin", userContoller.createAdmin)
 export const userRouter: Router = router;

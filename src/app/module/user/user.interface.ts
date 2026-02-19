@@ -18,3 +18,14 @@ export interface ICreateDoctorPayload {
     }
     specialities: string[]
 }
+// Add this interface to user.interface.ts
+
+export interface ICreateAdmin {
+    password: string;
+    admin: {
+        name: string;
+        email: string;
+        profilePhoto?: string;
+        contactNumber: string;
+    };
+}

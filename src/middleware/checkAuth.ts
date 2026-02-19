@@ -62,9 +62,10 @@ export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Resp
             if (!verfiedToken.success) {
                 throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! invaild access token")
             }
-            if (verfiedToken.data!.role !== "ADMIN") {
+            if (authRols.length > 0 && !authRols.includes(verfiedToken.data!.role as Role)) {
                 throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
             }
+            next();
         }
 
     } catch (error) {
