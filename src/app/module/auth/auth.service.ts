@@ -36,9 +36,28 @@ const registerPatient = async (payload: IRegisterPatiendPayload) => {
             })
             return patientTx
         })
+        const accessToken = tokenUtils.getAccessToken({
+            userId: data.user.id,
+            email: data.user.email,
+            role: data.user.role,
+            status: data.user.status,
+            isDeleted: data.user.isDeleted,
+            emailVerified: data.user.emailVerified
+        })
+        const refreshToken = tokenUtils.getRefreshToken({
+            userId: data.user.id,
+            email: data.user.email,
+            role: data.user.role,
+            status: data.user.status,
+            isDeleted: data.user.isDeleted,
+            emailVerfied: data.user.emailVerified
+        })
 
         return {
-            ...data, patient
+            ...data,
+            accessToken,
+            refreshToken,
+            patient
         }
     } catch (error) {
         console.log("Transaction error", error);
