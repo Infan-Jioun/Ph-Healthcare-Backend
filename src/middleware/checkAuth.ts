@@ -4,6 +4,8 @@ import { cookieUtils } from "../app/utils/cookie";
 import AppError from "../app/errorHelper/appError";
 import status from "http-status";
 import { prisma } from "../app/lib/prisma";
+import { jwtUtils } from "../app/utils/jwt";
+import { envVars } from "../config/env";
 
 export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -24,6 +26,7 @@ export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Resp
                     user: true
                 }
             })
+            // ! betterauth session checker
             if (sessionExists && sessionExists.user) {
                 const user = sessionExists.user;
                 const now = new Date();
@@ -47,9 +50,20 @@ export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Resp
                 if (authRols.length > 0 && !authRols.includes(user.role as Role)) {
                     throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
                 }
-                return next()
+
+            }
+
+            // !JWT Token checker
+            const accessToken = cookieUtils.getCookie(req, "accessToken");
+            if (!accessToken) {
+                throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! No session token provided")
+            }
+            const verifyToken = jwtUtils.verifyToken(accessToken, envVars.ACCESS_TOKEN_SECRET);
+            if (!verifyToken.success) {
+                throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! invaild access token")
             }
         }
+
     } catch (error) {
         next(error)
     }
