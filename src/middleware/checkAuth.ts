@@ -58,9 +58,12 @@ export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Resp
             if (!accessToken) {
                 throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! No session token provided")
             }
-            const verifyToken = jwtUtils.verifyToken(accessToken, envVars.ACCESS_TOKEN_SECRET);
-            if (!verifyToken.success) {
+            const verfiedToken = jwtUtils.verifyToken(accessToken, envVars.ACCESS_TOKEN_SECRET);
+            if (!verfiedToken.success) {
                 throw new AppError(status.UNAUTHORIZED, "Unauthorzied access! invaild access token")
+            }
+            if (verfiedToken.data!.role !== "ADMIN") {
+                throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
             }
         }
 
