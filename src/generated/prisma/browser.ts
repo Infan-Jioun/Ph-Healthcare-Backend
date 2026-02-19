@@ -18,6 +18,11 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model Admin
+ * 
+ */
+export type Admin = Prisma.AdminModel
+/**
  * Model User
  * 
  */
@@ -57,3 +62,8 @@ export type Speciality = Prisma.SpecialityModel
  * 
  */
 export type DoctorSpeciality = Prisma.DoctorSpecialityModel
+/**
+ * Model SuperAdmin
+ * 
+ */
+export type SuperAdmin = Prisma.SuperAdminModel
