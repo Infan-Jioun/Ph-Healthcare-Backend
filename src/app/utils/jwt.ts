@@ -1,3 +1,7 @@
-const createToken = {};
-const verifyToken = {};
-const decodeToken = {}
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+const createToken = (payload: JwtPayload, secret: string, { expiresIn }: SignOptions) => {
+    const token = jwt.sign(payload, secret, { expiresIn })
+    return token;
+};
+const verifyToken = () => { };
+const decodeToken = () => { }
