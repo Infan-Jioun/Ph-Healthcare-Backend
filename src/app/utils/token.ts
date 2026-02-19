@@ -33,8 +33,19 @@ const setAccessTokenCookie = (res: Response, token: string) => {
 
     })
 }
+const setRefreshTokenCookie = (res: Response, token: string) => {
+    const maxAge = ms(Number(envVars.REFRESH_TOKEN_EXPIRES_IN));
+    cookieUtils.setCookie(res, "refreshToken", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: '/',
+        maxAge: Number(maxAge)
+    })
+}
 export const tokenUtils = {
     getAccessToken,
     getRefreshToken,
-    setAccessTokenCookie
+    setAccessTokenCookie,
+    setRefreshTokenCookie
 }
