@@ -7,6 +7,7 @@ import { userRouter } from "./app/module/user/user.router";
 import { doctorRouter } from "./app/module/doctor/doctor.router";
 import cookieParser from "cookie-parser";
 import { adminRouter } from "./app/module/admin/admin.router";
+import { superAdminRouter } from "./app/module/superAdmin/superAdmin.router";
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }));
 
@@ -17,6 +18,7 @@ app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/specialities", SpecialityRouter)
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/admin", adminRouter)
+app.use("/api/v1/superAdmin", superAdminRouter)
 app.use("/api/v1/doctors", doctorRouter)
 app.get('/', (req, res) => {
     res.send("Ph Healthcare successfully running")

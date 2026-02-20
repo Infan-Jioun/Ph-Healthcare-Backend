@@ -3,6 +3,8 @@ import { adminContoller } from "./admin.contoller";
 import { checkAuth } from "../../../middleware/checkAuth";
 import { Role } from "../../../generated/prisma/enums";
 const router = express.Router();
-router.get("/", checkAuth(Role.SUPER_ADMIN), adminContoller.getAdmin)
-router.get("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), adminContoller.getAdminById)
+router.get("/", checkAuth(Role.SUPER_ADMIN), adminContoller.getAdmin);
+router.get("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), adminContoller.getAdminById);
+router.put("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), adminContoller.updateAdmin);
+router.delete("/:id", checkAuth(Role.SUPER_ADMIN), adminContoller.deleteAdmin);
 export const adminRouter: Router = router; 

@@ -34,7 +34,8 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
 
     const existingData = await prisma.doctor.findUnique({
         where: {
-            id
+            id,
+            email: payload.doctor.email
         },
     })
     if (!existingData) {
@@ -42,7 +43,9 @@ const updateDoctor = async (id: string, payload: IUpdateDoctorPayload) => {
     }
     const doctor = await prisma.doctor.update({
         where: { id },
-        data: payload
+        data: {
+            ...payload.doctor
+        }
     })
     return doctor
 }

@@ -27,8 +27,34 @@ const getAdminById = catchAsync(
         })
     }
 )
+const updateAdmin = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const result = await adminService.updateAdmin(id as string, req.body);
+        sendResposne(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Admin updated Successfully",
+            data: result
+        })
+    }
+)
+const deleteAdmin = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const result = await adminService.deleteAdmin(id as string);
+        sendResposne(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Admin deleted Successfully",
+            data: result
+        })
+    }
+)
 
 export const adminContoller = {
     getAdmin,
-    getAdminById
+    getAdminById,
+    updateAdmin,
+    deleteAdmin
 }
