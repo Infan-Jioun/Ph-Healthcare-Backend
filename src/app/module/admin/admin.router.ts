@@ -1,0 +1,8 @@
+import express, { Router } from "express";
+import { adminContoller } from "./admin.contoller";
+import { checkAuth } from "../../../middleware/checkAuth";
+import { Role } from "../../../generated/prisma/enums";
+const router = express.Router();
+router.get("/", checkAuth(Role.SUPER_ADMIN), adminContoller.getAdmin)
+router.get("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), adminContoller.getAdminById)
+export const adminRouter: Router = router; 
