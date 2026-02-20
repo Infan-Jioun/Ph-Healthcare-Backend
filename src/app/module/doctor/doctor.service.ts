@@ -25,7 +25,35 @@ const getDoctorById = async (id: string) => {
     const doctor = await prisma.doctor.findFirst({
         where: {
             id,
-        },
+            isDeleted: false
+        }, include: {
+            user: true,
+            specialities: {
+                include: {
+                    speciality: true
+                }
+            }, appointments: {
+                include: {
+                    patient: true,
+                    schedule: true,
+                    prescription: true,
+
+                }
+            },
+            doctorSchedules: {
+                include: {
+                    schedule: true
+                }
+
+
+            },
+            reviews: {
+                include: {
+                    patient: true
+                }
+            }
+
+        }
 
     })
     return doctor
