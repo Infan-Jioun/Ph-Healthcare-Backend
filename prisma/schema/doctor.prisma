@@ -10,7 +10,7 @@ model Doctor {
     registrationNumber  String    @unique
     experience          Int       @default(0)
     gender              Gender
-    appointmentFee     Float
+    appointmentFee      Float
     qualification       String
     currentWorkingPlace String
     designation         String
@@ -23,8 +23,13 @@ model Doctor {
     user       User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     // doctorSpeciality DoctorSpeciality[]
     speciality DoctorSpeciality[]
-
+    appointments  Appointment[]
+    reviews       Review[]
+   doctorSchedules DoctorSchedules[]
+   prescriptions Prescription[]
     @@index([email], name: "idx_doctor_email")
     @@index([isDeleted], name: "is_Doctor_deleted")
     @@map("doctor")
 }
+
+
