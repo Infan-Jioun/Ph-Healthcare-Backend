@@ -50,6 +50,11 @@ export const checkAuth = (...authRols: Role[]) => async (req: Request, res: Resp
                 if (authRols.length > 0 && !authRols.includes(user.role as Role)) {
                     throw new AppError(status.FORBIDDEN, "Forbidden access! You have not permission to access this resource.")
                 }
+                req.user = {
+                    userId: user.id,
+                    role: user.role,
+                    email: user.email
+                }
 
             }
 
