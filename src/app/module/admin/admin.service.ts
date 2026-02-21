@@ -2,6 +2,8 @@ import status from "http-status"
 import { prisma } from "../../lib/prisma"
 import { IUpdateAdminPayload } from "./admin.interface"
 import AppError from "../../errorHelper/appError"
+import { Status } from "../../../generated/prisma/enums"
+import { IRequestUser } from "../../interface/requestUserInterface"
 
 const getAdmin = async () => {
     const admin = await prisma.admin.findMany({
@@ -38,16 +40,55 @@ const updateAdmin = async (id: string, payload: IUpdateAdminPayload) => {
     })
     return admin;
 }
-const deleteAdmin = async (id: string) => {
-    const existingData = await prisma.admin.findUnique({
-        where: { id },
+const deleteAdmin = async (id: string, user: IRequestUser) => {
+  
+
+    const isAdminExist = await prisma.admin.findUnique({
+        where: {
+            id,
+        }
     })
-    if (!existingData) {
-        throw new AppError(status.NOT_FOUND, "Admin not found")
+
+    if (!isAdminExist) {
+        throw new AppError(status.NOT_FOUND, "Admin Or Super Admin not found");
     }
-    const result = await prisma.admin.delete({
-        where: { id }
-    })
+
+    if (isAdminExist.id === user.userId) {
+        throw new AppError(status.BAD_REQUEST, "You cannot delete yourself");
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+        await tx.admin.update({
+            where: { id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+            },
+        })
+
+        await tx.user.update({
+            where: { id: isAdminExist.userId },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+                status: Status.DELETED //* Optional: you may also want to block the user
+            },
+        })
+
+        await tx.session.deleteMany({
+            where: { userId: isAdminExist.userId }
+        })
+
+        await tx.account.deleteMany({
+            where: { userId: isAdminExist.userId }
+        })
+
+        const admin = await getAdminById(id);
+
+        return admin;
+    }
+    )
+
     return result;
 }
 export const adminService = {
