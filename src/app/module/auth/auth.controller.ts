@@ -4,6 +4,7 @@ import { authService } from "./auth.service";
 import { sendResposne } from "../../../shared/sendResponse";
 import status from "http-status";
 import { tokenUtils } from "../../utils/token";
+import { IRequestUser } from "../../interface/requestUserInterface";
 
 const registerPatient = catchAsync(
     async (req: Request, res: Response) => {
@@ -48,7 +49,7 @@ const loginPatient = catchAsync(
 const getMe = catchAsync(
     async (req: Request, res: Response) => {
         const user = req.user;
-        const result = await authService.getMe(user);
+        const result = await authService.getMe(user as IRequestUser);
         sendResposne(res, {
             httpStatusCode: status.OK,
             success: true,
