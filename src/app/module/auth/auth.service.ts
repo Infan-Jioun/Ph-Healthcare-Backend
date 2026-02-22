@@ -214,8 +214,30 @@ const changePassword = async (payload: IChangePassword, sessionToken: string) =>
         headers: {
             Authorization: `Bearer ${sessionToken}`
         }
+
     })
-    return result;
+    const newAccessToken = tokenUtils.getAccessToken({
+        userId: session.user.id,
+        email: session.user.email,
+        role: session.user.role,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified
+    })
+    // ! new refresh token generate
+    const newRefreshToken = tokenUtils.getRefreshToken({
+        userId: session.user.id,
+        email: session.user.email,
+        role: session.user.role,
+        status: session.user.status,
+        isDeleted: session.user.isDeleted,
+        emailVerified: session.user.emailVerified
+    })
+    return {
+        ...result,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+    }
 }
 
 export const authService = {

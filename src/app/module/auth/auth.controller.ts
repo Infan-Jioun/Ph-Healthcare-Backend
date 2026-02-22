@@ -84,9 +84,25 @@ const getNewToken = catchAsync(
         })
     }
 )
+const changePassword = catchAsync(
+    async(req: Request, res: Response) => {
+    const payload = req.body;
+    const betterAuthSessionToken = req.cookies["better-auth-session_token"];
+    if (!betterAuthSessionToken) {
+        throw new AppError(status.UNAUTHORIZED, "Better auth session token is missing");
+    }
+    const result = await authService.changePassword(payload, betterAuthSessionToken);
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Password changed successfully",
+        data: result
+    })
+})
 export const authController = {
     registerPatient,
     loginPatient,
     getMe,
-    getNewToken
+    getNewToken,
+    changePassword
 }
