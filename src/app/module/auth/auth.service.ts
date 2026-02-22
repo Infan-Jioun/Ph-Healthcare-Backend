@@ -6,6 +6,8 @@ import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interface/requestUserInterface";
+import { jwtUtils } from "../../utils/jwt";
+import { envVars } from "../../../config/env";
 
 interface IRegisterPatiendPayload {
     name: string,
@@ -129,7 +131,6 @@ const getMe = async (user: IRequestUser) => {
                 include: {
                     appointments: true,
                     doctorSchedules: true,
-                
                     speciality: true,
                     reviews: true,
 
@@ -144,6 +145,12 @@ const getMe = async (user: IRequestUser) => {
         throw new AppError(status.NOT_FOUND, "User Not found")
     }
     return existingUser;
+}
+const getNewToken = async (refreshToken: string, sessionToken: string) => {
+    const verifiedRefreshToken = jwtUtils.verifyToken(refreshToken, envVars.REFRESH_TOKEN_SECRET);
+    if (!verifiedRefreshToken.success && verifiedRefreshToken.error) {
+        throw new AppError(status.UNAUTHORIZED, "Invalid refresh token")
+    }
 }
 export const authService = {
     registerPatient,

@@ -71,7 +71,7 @@ const deleteAdmin = async (id: string, user: IRequestUser) => {
             data: {
                 isDeleted: true,
                 deletedAt: new Date(),
-                status: Status.DELETED //* Optional: you may also want to block the user
+                status: Status.DELETED // Optional: you may also want to block the user
             },
         })
 

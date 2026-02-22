@@ -7,9 +7,9 @@ import { IRequestUser } from "../../interface/requestUserInterface";
 
 
 declare module "express-serve-static-core" {
-  interface Request {
-    user?: IRequestUser;
-  }
+    interface Request {
+        user?: IRequestUser;
+    }
 }
 
 const getAdmin = catchAsync(
@@ -50,7 +50,6 @@ const updateAdmin = catchAsync(
 const deleteAdmin = catchAsync(
     async (req: Request, res: Response) => {
         const { id } = req.params;
-        ;
         const result = await adminService.deleteAdmin(id as string, req.user as IRequestUser);
         sendResposne(res, {
             httpStatusCode: status.OK,
