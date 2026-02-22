@@ -62,7 +62,7 @@ const getMe = catchAsync(
 const getNewToken = catchAsync(
     async (req: Request, res: Response) => {
         const refreshToken = req.cookies.refreshToken;
-        const betterAuthSessionToken = req.cookies["better-auth.session_token"];
+        const betterAuthSessionToken = req.cookies["better-auth-session_token"];
         if (!refreshToken) {
             throw new AppError(status.UNAUTHORIZED, "Refesh is missing");
 
