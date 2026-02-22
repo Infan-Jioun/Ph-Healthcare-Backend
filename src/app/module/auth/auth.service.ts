@@ -8,6 +8,7 @@ import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import { jwtUtils } from "../../utils/jwt";
 import { envVars } from "../../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 interface IRegisterPatiendPayload {
     name: string,
@@ -150,6 +151,29 @@ const getNewToken = async (refreshToken: string, sessionToken: string) => {
     const verifiedRefreshToken = jwtUtils.verifyToken(refreshToken, envVars.REFRESH_TOKEN_SECRET);
     if (!verifiedRefreshToken.success && verifiedRefreshToken.error) {
         throw new AppError(status.UNAUTHORIZED, "Invalid refresh token")
+    }
+    // ! new acccess token generate
+    const data = verifiedRefreshToken.data as JwtPayload;
+    const newAccessToken = tokenUtils.getAccessToken({
+        userId: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified
+    })
+    // ! new refresh token generate
+    const newRefreshToken = tokenUtils.getRefreshToken({
+        userId: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerfied: data.user.emailVerified
+    })
+    return {
+        newAccessToken,
+        newRefreshToken
     }
 }
 export const authService = {
