@@ -148,6 +148,17 @@ const getMe = async (user: IRequestUser) => {
     return existingUser;
 }
 const getNewToken = async (refreshToken: string, sessionToken: string) => {
+    const isSessionTokenExists = await prisma.session.findUnique({
+        where: {
+            token: sessionToken,
+        },
+        include: {
+            user: true
+        }
+    })
+    if (!isSessionTokenExists) {
+        throw new AppError(status.UNAUTHORIZED, "Invaild session user")
+    }
     const verifiedRefreshToken = jwtUtils.verifyToken(refreshToken, envVars.REFRESH_TOKEN_SECRET);
     if (!verifiedRefreshToken.success && verifiedRefreshToken.error) {
         throw new AppError(status.UNAUTHORIZED, "Invalid refresh token")
