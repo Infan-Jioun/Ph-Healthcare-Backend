@@ -9,7 +9,7 @@ import { IRequestUser } from "../../interface/requestUserInterface";
 import { jwtUtils } from "../../utils/jwt";
 import { envVars } from "../../../config/env";
 import { JwtPayload } from "jsonwebtoken";
-import { ILoginPatient, IRegisterPatiendPayload } from "./auth.interface";
+import { IChangePassword, ILoginPatient, IRegisterPatiendPayload } from "./auth.interface";
 
 
 const registerPatient = async (payload: IRegisterPatiendPayload) => {
@@ -193,6 +193,17 @@ const getNewToken = async (refreshToken: string, sessionToken: string) => {
         newAccessToken,
         newRefreshToken,
         sessionToken: updateSession.token
+    }
+}
+const changePassword = async (payload: IChangePassword, sessionToken: string) => {
+    //! session checker 
+    const session = await auth.api.getSession({
+        headers: {
+            Authorization: `Bearer ${sessionToken}`
+        }
+    })
+    if (!session) {
+        throw new AppError(status.UNAUTHORIZED, "Invalid Token")
     }
 }
 export const authService = {
