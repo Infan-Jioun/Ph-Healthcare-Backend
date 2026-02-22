@@ -205,10 +205,23 @@ const changePassword = async (payload: IChangePassword, sessionToken: string) =>
     if (!session) {
         throw new AppError(status.UNAUTHORIZED, "Invalid Token")
     }
+    const result = await auth.api.changePassword({
+        body: {
+            currentPassword: payload.currentPassword,
+            newPassword: payload.newPassword,
+            revokeOtherSessions: true
+        },
+        headers: {
+            Authorization: `Bearer ${sessionToken}`
+        }
+    })
+    return result;
 }
+
 export const authService = {
     registerPatient,
     loginPatient,
     getMe,
-    getNewToken
+    getNewToken,
+    changePassword
 }
