@@ -182,13 +182,24 @@ const getNewToken = async (refreshToken: string, sessionToken: string) => {
         isDeleted: data.user.isDeleted,
         emailVerfied: data.user.emailVerified
     })
+    const { token } = await prisma.session.update({
+        where: {
+            token: sessionToken
+        }, data: {
+            token: sessionToken,
+            expiresAt: new Date(Date.now() + 60 * 60 * 60 * 24 * 1000),
+            updatedAt: new Date(),
+        }
+    })
     return {
         newAccessToken,
-        newRefreshToken
+        newRefreshToken,
+        sessionToken: token
     }
 }
 export const authService = {
     registerPatient,
     loginPatient,
-    getMe
+    getMe,
+    getNewToken
 }
