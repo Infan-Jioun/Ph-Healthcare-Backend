@@ -287,8 +287,38 @@ const forgotPassword = async (email: string) => {
             email
         }
     })
+
 }
 
+const resetPassword = async (email: string, otp: string, newPassword: string) => {
+    const userExits = await prisma.user.findUnique({
+        where: {
+            email
+        }
+    })
+    if (!userExits) {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    if (!userExits.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Eamil Not Verfied ")
+    }
+    if (userExits.isDeleted || userExits.status === Status.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    await auth.api.resetPasswordEmailOTP({
+        body: {
+            email,
+            otp,
+            password: newPassword
+        }
+    })
+    await prisma.session.deleteMany({
+        where: {
+            userId: userExits.id
+        }
+    })
+
+}
 export const authService = {
     registerPatient,
     loginPatient,
@@ -297,5 +327,6 @@ export const authService = {
     changePassword,
     logoutUser,
     verifyEmail,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }
