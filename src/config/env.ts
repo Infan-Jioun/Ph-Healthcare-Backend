@@ -23,6 +23,8 @@ interface EnvConfig {
     }
     GOOGLE_CLINET_ID: string
     GOOGLE_SECRET: string
+    GOOGLE_CALLBACK_URL: string,
+    FRONTEND_URL: string
 
 
 
@@ -46,7 +48,9 @@ const loadEnvVariables = (): EnvConfig => {
         "EMAIL_SENDER_SMTP_PORT",
         "EMAIL_SENDER_SMTP_FORM",
         "GOOGLE_CLINET_ID",
-        "GOOGLE_SECRET"
+        "GOOGLE_SECRET",
+        "GOOGLE_CALLBACK_URL",
+        "FRONTEND_URL"
     ]
     requireEnvVariables.forEach((variable) => {
         if (!process.env[variable]) {
@@ -74,6 +78,8 @@ const loadEnvVariables = (): EnvConfig => {
         },
         GOOGLE_CLINET_ID: process.env.GOOGLE_CLINET_ID as string,
         GOOGLE_SECRET: process.env.GOOGLE_SECRET as string,
+        GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
+        FRONTEND_URL: process.env.FRONTEND_URL as string,
 
 
 
