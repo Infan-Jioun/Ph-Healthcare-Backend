@@ -216,6 +216,16 @@ const changePassword = async (payload: IChangePassword, sessionToken: string) =>
         }
 
     })
+    if (session.user.needPasswordChange) {
+        await prisma.user.update({
+            where: {
+                id: session.user.id,
+            },
+            data: {
+                needPasswordChange: false
+            }
+        })
+    }
     const newAccessToken = tokenUtils.getAccessToken({
         userId: session.user.id,
         email: session.user.email,
@@ -266,7 +276,7 @@ const verifyEmail = async (otp: string, email: string) => {
     }
     return result;
 }
-const forgotPassword = async (email: string) => {
+const forgetPassword = async (email: string) => {
 
     const userExits = await prisma.user.findUnique({
         where: {
@@ -327,6 +337,6 @@ export const authService = {
     changePassword,
     logoutUser,
     verifyEmail,
-    forgotPassword,
+    forgetPassword,
     resetPassword
 }
