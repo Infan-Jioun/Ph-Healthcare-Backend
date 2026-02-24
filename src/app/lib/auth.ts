@@ -30,7 +30,7 @@ export const auth = betterAuth({
                     needPasswordChange: false,
                     emailVerified: true,
                     isDeleted: false,
-                    deleteAt: null
+                    deletedAt: null
 
                 }
             },
@@ -127,6 +127,28 @@ export const auth = betterAuth({
             enabled: true,
             // maxAge: Number(ms(envVars.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN as StringValue))
             maxAge: 60 * 60 * 60 * 24
+        }
+    },
+    advanced: {
+        useSecureCookies: false,
+        cookies: {
+            state: {
+                attributes: {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/"
+                },
+
+
+            }, sessionToken: {
+                attributes: {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                    path: "/"
+                }
+            }
         }
     }
 
