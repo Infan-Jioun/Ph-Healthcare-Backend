@@ -8,9 +8,12 @@ import { doctorRouter } from "./app/module/doctor/doctor.router";
 import cookieParser from "cookie-parser";
 import { adminRouter } from "./app/module/admin/admin.router";
 import { superAdminRouter } from "./app/module/superAdmin/superAdmin.router";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./app/lib/auth";
 const app: Application = express()
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/auth", toNodeHandler(auth))
 // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(cookieParser())
