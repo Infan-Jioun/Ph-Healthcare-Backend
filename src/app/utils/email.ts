@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { envVars } from "../../config/env";
 import nodemailler from "nodemailer";
-import path from "node:path";
+import path from "path";
 import ejs from 'ejs';
 import AppError from "../errorHelper/appError";
 import status from "http-status";
 const transporter = nodemailler.createTransport({
     host: envVars.EMAIL_SENDER.SMTP_HOST,
-    secure: true,
+    secure: false,
     auth: {
         user: envVars.EMAIL_SENDER.SMTP_USER,
         pass: envVars.EMAIL_SENDER.SMTP_PASS

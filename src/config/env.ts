@@ -63,12 +63,11 @@ const loadEnvVariables = (): EnvConfig => {
         BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN: process.env.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN as string,
         BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE: process.env.BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE as string,
         EMAIL_SENDER: {
-            SMTP_USER: process.env.SMTP_USER as string,
-            SMTP_PASS: process.env.SMTP_PASS as string,
-            SMTP_HOST: process.env.SMTP_HOST as string,
-            SMTP_PORT: process.env.SMTP_PORT as string,
-            SMTP_FORM: process.env.SMTP_FORM as string
-
+            SMTP_USER: process.env.EMAIL_SENDER_SMTP_USER as string,
+            SMTP_PASS: process.env.EMAIL_SENDER_SMTP_PASS as string,
+            SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST as string,
+            SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT as string,
+            SMTP_FORM: process.env.EMAIL_SENDER_SMTP_FORM as string
         }
 
 
