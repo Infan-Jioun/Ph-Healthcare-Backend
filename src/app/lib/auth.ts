@@ -4,6 +4,7 @@ import { prisma } from "./prisma";
 import { Role, Status } from "../../generated/prisma/enums";
 import { bearer, emailOTP } from "better-auth/plugins";
 import { sendEmail } from "../utils/email";
+import { envVars } from "../../config/env";
 // import ms, { StringValue } from "ms";
 // import { envVars } from "../../config/env";
 
@@ -15,6 +16,25 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true
+    },
+    // ! Google Config with better auth  
+    socialProviders: {
+        google: {
+            clientId: envVars.GOOGLE_CLINET_ID,
+            clientSecret: envVars.GOOGLE_SECRET,
+            // !  mapProfileToUser Usign for only default data provide with user
+            mapProfileToUser: () => {
+                return {
+                    role: Role.PATIENT,
+                    status: Status.ACTIVE,
+                    needPasswordChange: false,
+                    emailVerified: true,
+                    isDeleted: false,
+                    deleteAt: null
+
+                }
+            },
+        }
     },
     emailVerification: {
         sendOnSignIn: true,
