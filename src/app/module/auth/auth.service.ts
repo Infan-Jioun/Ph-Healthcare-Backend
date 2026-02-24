@@ -266,6 +266,29 @@ const verifyEmail = async (otp: string, email: string) => {
     }
     return result;
 }
+const forgotPassword = async (email: string) => {
+
+    const userExits = await prisma.user.findUnique({
+        where: {
+            email
+        }
+    })
+    if (!userExits) {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    if (!userExits.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Eamil Not Verfied ")
+    }
+    if (userExits.isDeleted || userExits.status === Status.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    await auth.api.requestPasswordResetEmailOTP({
+        body: {
+            email
+        }
+    })
+}
+
 export const authService = {
     registerPatient,
     loginPatient,
@@ -273,5 +296,6 @@ export const authService = {
     getNewToken,
     changePassword,
     logoutUser,
-    verifyEmail
+    verifyEmail,
+    forgotPassword
 }
