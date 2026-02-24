@@ -21,7 +21,8 @@ interface EnvConfig {
         SMTP_PORT: string
         SMTP_FORM: string
     }
-
+    GOOGLE_CLINET_ID: string
+    GOOGLE_SECRET: string
 
 
 
@@ -43,7 +44,9 @@ const loadEnvVariables = (): EnvConfig => {
         "EMAIL_SENDER_SMTP_PASS",
         "EMAIL_SENDER_SMTP_HOST",
         "EMAIL_SENDER_SMTP_PORT",
-        "EMAIL_SENDER_SMTP_FORM"
+        "EMAIL_SENDER_SMTP_FORM",
+        "GOOGLE_CLINET_ID",
+        "GOOGLE_SECRET"
     ]
     requireEnvVariables.forEach((variable) => {
         if (!process.env[variable]) {
@@ -68,7 +71,10 @@ const loadEnvVariables = (): EnvConfig => {
             SMTP_HOST: process.env.EMAIL_SENDER_SMTP_HOST as string,
             SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT as string,
             SMTP_FORM: process.env.EMAIL_SENDER_SMTP_FORM as string
-        }
+        },
+        GOOGLE_CLINET_ID: process.env.GOOGLE_CLINET_ID as string,
+        GOOGLE_SECRET: process.env.GOOGLE_SECRET as string,
+
 
 
 
