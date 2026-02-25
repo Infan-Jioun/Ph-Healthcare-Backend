@@ -24,8 +24,12 @@ interface EnvConfig {
     GOOGLE_CLINET_ID: string
     GOOGLE_SECRET: string
     GOOGLE_CALLBACK_URL: string,
-    FRONTEND_URL: string
-
+    FRONTEND_URL: string,
+    CLOUDINARY: {
+        CLOUDINARY_CLOUD_NAME: string,
+        CLOUDINARY_API_KEY: string,
+        CLOUDINARY_SECRET: string
+    }
 
 
 }
@@ -50,7 +54,10 @@ const loadEnvVariables = (): EnvConfig => {
         "GOOGLE_CLINET_ID",
         "GOOGLE_SECRET",
         "GOOGLE_CALLBACK_URL",
-        "FRONTEND_URL"
+        "FRONTEND_URL",
+        "CLOUDINARY_CLOUD_NAME",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_SECRET"
     ]
     requireEnvVariables.forEach((variable) => {
         if (!process.env[variable]) {
@@ -80,6 +87,13 @@ const loadEnvVariables = (): EnvConfig => {
         GOOGLE_SECRET: process.env.GOOGLE_SECRET as string,
         GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
         FRONTEND_URL: process.env.FRONTEND_URL as string,
+        CLOUDINARY: {
+            CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+            CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
+            CLOUDINARY_SECRET: process.env.CLOUDINARY_CLOUD_NAME as string
+
+
+        }
 
 
 
