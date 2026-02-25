@@ -10,6 +10,7 @@ import { cookieUtils } from "../../utils/cookie";
 import { envVars } from "../../../config/env";
 import { auth } from "../../lib/auth";
 
+
 const registerPatient = catchAsync(
     async (req: Request, res: Response) => {
         const payload = req.body;
@@ -180,6 +181,7 @@ const googleLogin = catchAsync((req: Request, res: Response) => {
     res.render("googleRedirect", {
         callbackURL: callbackURL,
         betterAuthUrl: envVars.BETTER_AUTH_URL
+
     })
 
 })
@@ -187,15 +189,18 @@ const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
     const redirectPath = req.query.redirect as string || "/dashboard";
     const sessionToken = req.cookies["better-auth-session_token"];
     if (!sessionToken) {
-        return res.redirect(`${envVars.FRONTEND_URL}/login?error=oauth_failed`)
+        return res.redirect(`$http://localhost:3000/login?error=oauth_failed`)
     };
     const session = await auth.api.getSession({
         headers: {
             "Cookie": `better-auth-session_token=${sessionToken}`
         }
     })
+    if (!session) {
+        return res.redirect(`http://localhost:3000/login?error=no_session_found`)
+    }
     if (session && !session.user) {
-        return res.redirect(`${envVars.FRONTEND_URL}/login?error=no_user_found`)
+        return res.redirect(`http://localhost:3000/login?error=no_user_found`)
     }
     const result = await authService.googleLoginSuccess(session);
     const { accessToken, refreshToken } = result;
@@ -204,7 +209,11 @@ const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
     //! ? redirect=//profile=> /profile
     const isValidRedirectPath = redirectPath.startsWith("/") && !redirectPath.startsWith("//");
     const finalRedirectPath = isValidRedirectPath ? redirectPath : "/dashboard";
-    res.redirect(`${envVars.FRONTEND_URL}${finalRedirectPath}`)
+    res.redirect(`http://localhost:3000${finalRedirectPath}`)
+})
+const handelAuthError = catchAsync((req: Request, res: Response) => {
+    const error = req.query.error as string || "oauth_failed";
+    res.redirect(`http://localhost:3000/login?error=${error}`)
 })
 export const authController = {
     registerPatient,
@@ -216,5 +225,7 @@ export const authController = {
     verifyEmail,
     forgetPassword,
     resetPassword,
-    googleLogin
+    googleLogin,
+    googleLoginSuccess,
+    handelAuthError
 }
