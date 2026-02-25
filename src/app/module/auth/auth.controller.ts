@@ -8,6 +8,7 @@ import { IRequestUser } from "../../interface/requestUserInterface";
 import AppError from "../../errorHelper/appError";
 import { cookieUtils } from "../../utils/cookie";
 import { envVars } from "../../../config/env";
+import { auth } from "../../lib/auth";
 
 const registerPatient = catchAsync(
     async (req: Request, res: Response) => {
@@ -172,15 +173,38 @@ const resetPassword = catchAsync(
     }
 )
 //! /api/v1/auth/login/google
-const googleLogin = ((req: Request, res: Response) => {
+const googleLogin = catchAsync((req: Request, res: Response) => {
     const redirectPath = req.query.redirect || "/dashboard";
     const encodedRedirectPath = encodeURIComponent(redirectPath as string);
     const callbackURL = `${envVars.BETTER_AUTH_URL}/api/v1/auth/login/google/success?redirect=${encodedRedirectPath}}`;
     res.render("googleRedirect", {
         callbackURL: callbackURL,
-        betterAuthUrl: envVars.BETTER_AUTH_URL 
+        betterAuthUrl: envVars.BETTER_AUTH_URL
     })
 
+})
+const googleLoginSuccess = catchAsync(async (req: Request, res: Response) => {
+    const redirectPath = req.query.redirect as string || "/dashboard";
+    const sessionToken = req.cookies["better-auth-session_token"];
+    if (!sessionToken) {
+        return res.redirect(`${envVars.FRONTEND_URL}/login?error=oauth_failed`)
+    };
+    const session = await auth.api.getSession({
+        headers: {
+            "Cookie": `better-auth-session_token=${sessionToken}`
+        }
+    })
+    if (session && !session.user) {
+        return res.redirect(`${envVars.FRONTEND_URL}/login?error=no_user_found`)
+    }
+    const result = await authService.googleLoginSuccess(session);
+    const { accessToken, refreshToken } = result;
+    tokenUtils.setAccessTokenCookie(res, accessToken);
+    tokenUtils.setRefreshTokenCookie(res, refreshToken);
+    //! ? redirect=//profile=> /profile
+    const isValidRedirectPath = redirectPath.startsWith("/") && !redirectPath.startsWith("//");
+    const finalRedirectPath = isValidRedirectPath ? redirectPath : "/dashboard";
+    res.redirect(`${envVars.FRONTEND_URL}${finalRedirectPath}`)
 })
 export const authController = {
     registerPatient,
