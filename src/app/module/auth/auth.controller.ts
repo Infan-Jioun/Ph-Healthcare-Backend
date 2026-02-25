@@ -7,6 +7,7 @@ import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interface/requestUserInterface";
 import AppError from "../../errorHelper/appError";
 import { cookieUtils } from "../../utils/cookie";
+import { envVars } from "../../../config/env";
 
 const registerPatient = catchAsync(
     async (req: Request, res: Response) => {
@@ -170,6 +171,17 @@ const resetPassword = catchAsync(
         })
     }
 )
+//! /api/v1/auth/login/google
+const googleLogin = ((req: Request, res: Response) => {
+    const redirectPath = req.query.redirect || "/dashboard";
+    const encodedRedirectPath = encodeURIComponent(redirectPath as string);
+    const callbackURL = `${envVars.BETTER_AUTH_URL}/api/v1/auth/login/google/success?redirect=${encodedRedirectPath}}`;
+    res.render("googleRedirect", {
+        callbackURL: callbackURL,
+        betterAuthUrl: envVars.BETTER_AUTH_URL 
+    })
+
+})
 export const authController = {
     registerPatient,
     loginPatient,
@@ -179,5 +191,6 @@ export const authController = {
     logoutUser,
     verifyEmail,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    googleLogin
 }

@@ -329,6 +329,7 @@ const resetPassword = async (email: string, otp: string, newPassword: string) =>
     })
 
 }
+
 export const authService = {
     registerPatient,
     loginPatient,
@@ -338,5 +339,6 @@ export const authService = {
     logoutUser,
     verifyEmail,
     forgetPassword,
-    resetPassword
+    resetPassword,
+    googleLogin
 }
