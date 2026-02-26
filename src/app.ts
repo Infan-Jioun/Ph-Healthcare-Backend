@@ -26,7 +26,8 @@ app.set("views", path.resolve(process.cwd(), `src/app/templates`))
 app.use("/api/auth", toNodeHandler(auth))
 // Middleware to parse JSON bodies
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }))
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/specialities", SpecialityRouter)
 app.use("/api/v1/users", userRouter)
