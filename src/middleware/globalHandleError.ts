@@ -6,12 +6,16 @@ import status from "http-status";
 import { TErrorResponce, TErrorSource } from "../app/interface/error.interface";
 import { handelZodError } from "../app/errorHelper/handelZodError";
 import AppError from "../app/errorHelper/appError";
+import { deleteFileFromCloudinary } from "../config/cloudinary.config";
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const globalErrorHandlar = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const globalErrorHandlar = async (err: any, req: Request, res: Response, next: NextFunction) => {
     if (envVars.NODE_ENV === "development") {
         console.log("Error from global error Handler", err);
+    }
+    if (req.file) {
+        await deleteFileFromCloudinary(req.file.path)
     }
     let errorSource: TErrorSource[] = []
     let statusCode: number = status.INTERNAL_SERVER_ERROR;
@@ -37,7 +41,7 @@ export const globalErrorHandlar = (err: any, req: Request, res: Response, next: 
 
 
     }
-    else if (err instanceof Error){
+    else if (err instanceof Error) {
         statusCode = status.INTERNAL_SERVER_ERROR;
         message = err.message;
         stack = err.stack;
