@@ -17,49 +17,54 @@ export const globalErrorHandlar = async (err: any, req: Request, res: Response, 
     if (req.file) {
         await deleteFileFromCloudinary(req.file.path)
     }
-    let errorSource: TErrorSource[] = []
-    let statusCode: number = status.INTERNAL_SERVER_ERROR;
-    let message: string = "Internal server error ";
-    let stack: string | undefined;
-    if (err instanceof z.ZodError) {
-        const simplifiedError = handelZodError(err);
-        statusCode = simplifiedError.statusCode as number;
-        message = simplifiedError.message;
-        errorSource = [...(simplifiedError.errorSource ?? [])];
-        stack = err.stack;
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+        const imageUrls = req.files.map((file) => file.path);
+        await Promise.all(imageUrls.map(async (url) => {
+            await deleteFileFromCloudinary(url)
+        }))
+        let errorSource: TErrorSource[] = []
+        let statusCode: number = status.INTERNAL_SERVER_ERROR;
+        let message: string = "Internal server error ";
+        let stack: string | undefined;
+        if (err instanceof z.ZodError) {
+            const simplifiedError = handelZodError(err);
+            statusCode = simplifiedError.statusCode as number;
+            message = simplifiedError.message;
+            errorSource = [...(simplifiedError.errorSource ?? [])];
+            stack = err.stack;
 
-    } else if (err instanceof AppError) {
-        statusCode = err.statusCode;
-        message = err.message;
-        stack = err.stack;
-        errorSource = [
-            {
-                path: "",
-                message: err.message
-            }
-        ]
+        } else if (err instanceof AppError) {
+            statusCode = err.statusCode;
+            message = err.message;
+            stack = err.stack;
+            errorSource = [
+                {
+                    path: "",
+                    message: err.message
+                }
+            ]
 
 
+        }
+        else if (err instanceof Error) {
+            statusCode = status.INTERNAL_SERVER_ERROR;
+            message = err.message;
+            stack = err.stack;
+            errorSource = [
+                {
+                    path: "",
+                    message: err.message
+                }
+            ]
+        }
+        const errorResponse: TErrorResponce = {
+            success: false,
+            message: message,
+            errorSource,
+            error: envVars.NODE_ENV === "development" ? err : undefined,
+            stack: envVars.NODE_ENV === "development" ? stack : undefined
+        }
+        res.status(statusCode).json(errorResponse)
     }
-    else if (err instanceof Error) {
-        statusCode = status.INTERNAL_SERVER_ERROR;
-        message = err.message;
-        stack = err.stack;
-        errorSource = [
-            {
-                path: "",
-                message: err.message
-            }
-        ]
-    }
-    const errorResponse: TErrorResponce = {
-        success: false,
-        message: message,
-        errorSource,
-        error: envVars.NODE_ENV === "development" ? err : undefined,
-        stack: envVars.NODE_ENV === "development" ? stack : undefined
-    }
-    res.status(statusCode).json(errorResponse)
-
 }
 
