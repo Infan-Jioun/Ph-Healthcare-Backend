@@ -9,6 +9,9 @@ cloudinary.config({
 
 
 })
+exort const uploadFileToCloudinary = async (buff) => { 
+
+}
 export const deleteFileFromCloudinary = async (url: string) => {
     try {
         const regex = /\/upload\/(?:v\d+\/)?(.+)\.[^/.]+$/;
