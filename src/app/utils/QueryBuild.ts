@@ -79,5 +79,16 @@ export class QueryBuilder<T,
         }
         return this;
     }
+    filter(): this {
+        const { filterAbleFields } = this.config;
+        const exCludedField = ["searchItem", "page", "limit", "sortBy", "sortOrder", "fields", "includes"];
+        const filterParams: Record<string, unknown> = {};
+        Object.keys(this.queryParams).forEach((key) => {
+            if (!exCludedField.includes(key)) {
+                filterParams[key] = this.queryParams[key]
+            }
+        })
+        return this;
+    }
 
 }
