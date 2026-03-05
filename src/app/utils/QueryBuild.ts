@@ -251,8 +251,24 @@ export class QueryBuilder<T,
 
         return this;
     }
-    where(condiotion : TWhereInput): this {
-       this.query.where = this.deepMergs(this)
+    where(condiotion: TWhereInput): this {
+        this.query.where = this.deepMergs(this)
+    }
+
+    private deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
+        const result = { ...target };
+        for (const key in source) {
+            if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
+                if (result[key] && typeof result[key] === "object" && !Array.isArray(result[key])) {
+                    result[key] = this.deepMerge(result[key] as Record<string, unknown>, source[key] as Record<string, unknown>)
+                } else {
+                    result[key] = source[key];
+                }
+            } else {
+                result[key] = source[key]
+            }
+        }
+        return result
     }
     private parseFilterValue(value: unknown): unknown {
         if (value === "true") {
