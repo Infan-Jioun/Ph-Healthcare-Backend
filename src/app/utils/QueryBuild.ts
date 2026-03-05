@@ -101,39 +101,62 @@ export class QueryBuilder<T,
             }
             if (key.includes(".")) {
                 const parts = key.split(".");
-                if (parts.length === 1) {
+                if (filterAbleFields && !filterAbleFields.includes(key)) {
+                    return;
+                }
+                if (parts.length === 2) {
                     const [relations, nestedField] = parts;
+                    if (!queryWhere[relations]) {
+                        queryWhere[relations] = {};
+                        countQueryWhere[relations] = {}
+                    }
                     queryWhere[relations] = {
-                        [nestedField]: value
+                        [nestedField]: this.parseFilterValue(value)
                     }
                     countQueryWhere[relations] = {
-                        [nestedField]: value
+                        [nestedField]: this.parseFilterValue(value)
                     }
+                    return;
                 } else if (parts.length === 3) {
                     const [relations, nestedRelations, nestedField] = parts;
+                    if (!queryWhere[relations]) {
+                        queryWhere[relations] = {};
+                        countQueryWhere[relations] = {}
+                    }
                     queryWhere[relations] = {
                         [nestedRelations]: {
-                            [nestedField]: value
+                            [nestedField]: this.parseFilterValue(value)
                         }
                     }
                     countQueryWhere[relations] = {
                         [nestedField]: {
-                            [nestedField]: value
+                            [nestedField]: this.parseFilterValue(value)
                         }
                     }
                 }
+                return;
             } else {
-                queryWhere[key] = value;
-                countQueryWhere[key] = value
-            }
-            if (typeof value === "object" && value !== null && !Array.isArray(value)) {
                 queryWhere[key] = this.parseFilterValue(value);
                 countQueryWhere[key] = this.parseFilterValue(value);
-                return
-            }// direct 
+                return;
+            }
+            if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+                queryWhere[key] = this.parsedRangeFilter(value as Record<string, string | number>);;
+                countQueryWhere[key] = this.parsedRangeFilter(value as Record<string, string | number>);
+                return;
+            }
+            // direct 
             queryWhere[key] = this.parseFilterValue(value);
             countQueryWhere[key] = this.parseFilterValue(value);
         })
+        return this;
+    }
+    paginate(): this {
+        const page = Number(this.queryParams.page) || 1;
+        const limit = Number(this.queryParams.limit) || 10;
+        this.page = page;
+        this.limit = limit;
+        this.skip = (page - 1) * limit
         return this;
     }
     private parseFilterValue(value: unknown): unknown {
