@@ -33,7 +33,7 @@ export interface IQueryParams {
     limit?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
-    fiedls?: string;
+    fields?: string;
     includes?: string;
     [key: string]: string | undefined
 

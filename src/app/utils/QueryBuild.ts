@@ -192,7 +192,21 @@ export class QueryBuilder<T,
         return this;
 
     }
-
+    fields(): this {
+        const fieldsParam = this.queryParams.fields;
+        if (fieldsParam && typeof fieldsParam === "string") {
+            const fieldsArray = fieldsParam?.split(",").map(field => field.trim());
+            this.selectFields = {};
+            fieldsArray.forEach((field) => {
+                if (this.selectFields) {
+                    this.selectFields[field] = true;
+                }
+            })
+            this.query.select = this.selectFields as Record<string, boolean | Record<string, unknown>>;
+            delete this.query.innclude;
+        }
+        return this;
+    }
     private parseFilterValue(value: unknown): unknown {
         if (value === "true") {
             return true;
