@@ -27,3 +27,14 @@ export interface PrismaModelDelegets {
     findMany(args?: any): Promise<any[]>;
     count(args?: any): Promise<number>
 }
+export interface IQueryParams {
+    searchItem?: string;
+    page?: string;
+    limit?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+    fiedls?: string;
+    includes?: string;
+    [key: string]: string | undefined
+
+}

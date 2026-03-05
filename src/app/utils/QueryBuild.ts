@@ -12,8 +12,8 @@ export class QueryBuilder<T,
     private selectFields: Record<string, boolean | undefined>
 
     constructor(
-        private model: PrismaModelDelegets
-            private queryParams:
-            private config: 
+        private model: PrismaModelDelegets,
+        private queryParams: IQueryParams,
+        private config: 
     ) { }
 }
