@@ -130,5 +130,20 @@ export class QueryBuilder<T,
         })
         return this;
     }
+    private parseFilterValue(value: unknown): unknown {
+        if (value === "true") {
+            return true;
+        }
+        if (value === "false") {
+            return false;
+        }
+        if (typeof value === "string" && !isNaN(Number(value)) && value != "") {
+            return Number(value);
+        }
+        if (Array.isArray(value)) {
+            return { in: value.map((item) => this.parseFilterValue(item)) }
+        }
+        return value
+    }
 
 }
