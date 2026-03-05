@@ -159,6 +159,40 @@ export class QueryBuilder<T,
         this.skip = (page - 1) * limit
         return this;
     }
+    sort(): this {
+        const sortBy = this.queryParams.sortBy || "createdAt";
+        const sortOrder = this.queryParams.fields === "asc" ? "asc" : "desc";
+        this.sortBy = sortBy;
+        this.sortOrder = sortOrder;
+        if (sortBy.includes(".")) {
+            const parts = sortBy.split(".");
+            if (parts.length === 2) {
+                const [relations, nestedField] = parts;
+                this.query.orderBy = {
+                    [relations]: {
+                        [nestedField]: sortOrder
+                    }
+                }
+
+            } else if (parts.length === 3) {
+                const [relations, nestedRelations, nestedField] = parts;
+                this.query.orderBy = {
+                    [relations]: {
+                        [nestedRelations]: {
+                            [nestedField]: sortOrder
+                        }
+                    }
+                }
+            } else {
+                this.query.orderBy = {
+                    [sortBy]: sortOrder
+                }
+            }
+        }
+        return this;
+
+    }
+
     private parseFilterValue(value: unknown): unknown {
         if (value === "true") {
             return true;
