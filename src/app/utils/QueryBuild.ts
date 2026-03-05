@@ -1,4 +1,4 @@
-import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaStringFilter } from "../interface/query.interface"
+import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -71,7 +71,13 @@ export class QueryBuilder<T,
                 }
 
             })
+            //! Where Conditions 
+            const whereConditions = this.query.where as PrismaWhereConditions
+            whereConditions.OR = searchConditions;
+            const countWhereConditions = this.countQuery.where as PrismaWhereConditions;
+            countWhereConditions.OR = searchConditions;
         }
+        return this;
     }
 
 }
