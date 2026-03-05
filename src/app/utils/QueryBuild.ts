@@ -1,4 +1,4 @@
-import { PrismaCountAegs, PrismaFindManyAegs } from "../interface/query.interface"
+import { PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -10,4 +10,10 @@ export class QueryBuilder<T,
     private sortBy: string = "createdAt";
     private sortOrder: "asc" | "desc" = "desc";
     private selectFields: Record<string, boolean | undefined>
+
+    constructor(
+        private model: PrismaModelDelegets
+            private queryParams:
+            private config: 
+    ) { }
 }

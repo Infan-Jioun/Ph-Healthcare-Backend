@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PrismaFindManyAegs {
     where?: Record<string, unknown>;
     innclude?: Record<string, unknown>;
@@ -21,4 +22,8 @@ export interface PrismaCountAegs {
     distinct?: string[] | string;
     [key: string]: unknown;
 
+}
+export interface PrismaModelDelegets {
+    findMany(args?: any): Promise<any[]>;
+    count(args?: any): Promise<number>
 }
