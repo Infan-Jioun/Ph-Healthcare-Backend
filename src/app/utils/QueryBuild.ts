@@ -1,4 +1,4 @@
-import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets } from "../interface/query.interface"
+import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaStringFilter } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -25,6 +25,52 @@ export class QueryBuilder<T,
         };
         this.countQuery = {
             where: {}
+        }
+
+    }
+    search(): this {
+        const { searchItem } = this.queryParams;
+        const { searchAbleFields } = this.config;
+        if (searchItem && searchAbleFields && searchAbleFields.length > 0) {
+            const searchConditions: Record<string, unknown>[] = searchAbleFields.map((field) => {
+                if (field.includes(".")) {
+                    const parts = field.split(".");
+                    if (parts.length === 2) {
+                        const [relations, nestedField] = parts;
+                        const stringFilter = {
+                            contains: searchItem,
+                            node: "insensitive" as const
+                        }
+                        return {
+                            [relations]: {
+                                [nestedField]: stringFilter
+                            }
+                        }
+                    } else if (parts.length === 3) {
+                        const [relations, nestedRelations, nestedField] = parts;
+                        const stringFilter: PrismaStringFilter = {
+                            contains: searchItem,
+                            node: "insensitive" as const
+                        }
+                        return {
+                            [relations]: {
+                                [nestedRelations]: {
+                                    [nestedField]: stringFilter
+                                }
+                            }
+                        }
+                    }
+                }
+                //! Direct fields 
+                const stringFilter: PrismaStringFilter = {
+                    contains: searchItem,
+                    node: "insensitive" as const
+                }
+                return {
+                    [field]: stringFilter
+                }
+
+            })
         }
     }
 
