@@ -1,4 +1,4 @@
-import { PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets } from "../interface/query.interface"
+import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -14,6 +14,6 @@ export class QueryBuilder<T,
     constructor(
         private model: PrismaModelDelegets,
         private queryParams: IQueryParams,
-        private config: 
+        private config: IQueryConfig
     ) { }
 }
