@@ -15,5 +15,17 @@ export class QueryBuilder<T,
         private model: PrismaModelDelegets,
         private queryParams: IQueryParams,
         private config: IQueryConfig
-    ) { }
+    ) {
+        this.query = {
+            where: {},
+            include: {},
+            orderBy: {},
+            skip: 0,
+            take: 10
+        };
+        this.countQuery = {
+            where: {}
+        }
+    }
+
 }
