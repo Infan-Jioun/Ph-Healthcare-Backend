@@ -88,6 +88,46 @@ export class QueryBuilder<T,
                 filterParams[key] = this.queryParams[key]
             }
         })
+        const queryWhere = this.query.where as Record<string, unknown>;
+        const countQueryWhere = this.countQuery.where as Record<string, unknown>;
+        Object.keys(filterParams).forEach((key) => {
+            const value = filterParams[key];
+            if (value === "undefined" || value === "") {
+                return;
+            }
+            const isAllowedField = !filterAbleFields || filterAbleFields.length === 0 || filterAbleFields.includes(key);
+            if (!isAllowedField) {
+                return;
+            }
+            if (key.includes(".")) {
+                const parts = key.split(".");
+                if (parts.length === 1) {
+                    const [relations, nestedField] = parts;
+                    queryWhere[relations] = {
+                        [nestedField]: value
+                    }
+                    countQueryWhere[relations] = {
+                        [nestedField]: value
+                    }
+                } else if (parts.length === 3) {
+                    const [relations, nestedRelations, nestedField] = parts;
+                    queryWhere[relations] = {
+                        [nestedRelations]: {
+                            [nestedField]: value
+                        }
+                    }
+                    countQueryWhere[relations] = {
+                        [nestedField]: {
+                            [nestedField]: value
+                        }
+                    }
+                }
+            } else {
+                queryWhere[key] = value;
+                countQueryWhere[key] = value
+            }
+
+        })
         return this;
     }
 
