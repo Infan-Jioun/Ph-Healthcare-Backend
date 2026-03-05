@@ -1,4 +1,4 @@
-import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface"
+import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -128,7 +128,11 @@ export class QueryBuilder<T,
             }
             if (typeof value === "object" && value !== null && !Array.isArray(value)) {
                 queryWhere[key] = this.parseFilterValue(value);
-            }
+                countQueryWhere[key] = this.parseFilterValue(value);
+                return
+            }// direct 
+            queryWhere[key] = this.parseFilterValue(value);
+            countQueryWhere[key] = this.parseFilterValue(value);
         })
         return this;
     }
@@ -146,6 +150,39 @@ export class QueryBuilder<T,
             return { in: value.map((item) => this.parseFilterValue(item)) }
         }
         return value
+    }
+    private parsedRangeFilter(value: Record<string, string | number>):
+        PrismaNumberFilter | PrismaStringFilter | Record<string, string | unknown> {
+        const rangeQuery: Record<string, string | number | (string | number)[]> = {};
+        Object.keys(value).forEach((operator) => {
+            const operatorValue = value[operator];
+            const parsedValue: string | number = typeof operatorValue === "string" && !isNaN(Number(operatorValue)) ? Number(operatorValue) : operatorValue;
+            switch (operator) {
+                case "lt":
+                case "lte":
+                case "gt":
+                case "gte":
+                case "equals":
+                case "not":
+                case "contains":
+                case "startsWith":
+                case "endsWith":
+                    rangeQuery[operator] = parsedValue;
+                    break;
+                case "in":
+                case "notIn":
+                    if (Array.isArray(operatorValue)) {
+                        rangeQuery[operator] = operatorValue;
+                    } else {
+                        rangeQuery[operator] = [parsedValue];
+                    }
+                    break;
+                default: break;
+
+            }
+        });
+        return Object.keys(rangeQuery).length > 0 ? rangeQuery : value;
+
     }
 
 }
