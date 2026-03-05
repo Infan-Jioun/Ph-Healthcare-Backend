@@ -251,6 +251,9 @@ export class QueryBuilder<T,
 
         return this;
     }
+    where(condiotion : TWhereInput): this {
+       this.query.where = this.deepMergs(this)
+    }
     private parseFilterValue(value: unknown): unknown {
         if (value === "true") {
             return true;
