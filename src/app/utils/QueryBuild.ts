@@ -126,7 +126,9 @@ export class QueryBuilder<T,
                 queryWhere[key] = value;
                 countQueryWhere[key] = value
             }
-
+            if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+                queryWhere[key] = this.parseFilterValue(value);
+            }
         })
         return this;
     }
