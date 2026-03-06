@@ -1,4 +1,4 @@
-import { IQueryConfig, IQueryParams, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface"
+import { IQueryConfig, IQueryParams, IQueryResult, PrismaCountAegs, PrismaFindManyAegs, PrismaModelDelegets, PrismaNumberFilter, PrismaStringFilter, PrismaWhereConditions } from "../interface/query.interface"
 export class QueryBuilder<T,
     TWhereInput = Record<string, unknown>,
     TInclude = Record<string, unknown>> {
@@ -8,8 +8,8 @@ export class QueryBuilder<T,
     private limit: number = 10;
     private skip: number = 0;
     private sortBy: string = "createdAt";
-    private sortOrder: "asc" | "desc" = "desc";
-    private selectFields: Record<string, boolean | undefined>
+    private sortOrder: 'asc' | 'desc' = 'desc';
+    private selectFields: Record<string, boolean> | undefined;
 
     constructor(
         private model: PrismaModelDelegets,
@@ -251,9 +251,37 @@ export class QueryBuilder<T,
 
         return this;
     }
-    where(condiotion: TWhereInput): this {
-        this.query.where = this.deepMergs(this)
+    where(condition: TWhereInput): this {
+        this.query.where = this.deepMerge(this.query.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        this.countQuery.where = this.deepMerge(this.countQuery.where as Record<string, unknown>, condition as Record<string, unknown>);
+
+        return this;
     }
+    async execute(): Promise<IQueryResult<T>> {
+        const [total, data] = await Promise.all([
+            this.model.count(this.countQuery as Parameters<typeof this.model.count>[0]),
+            this.model.findMany(this.query as Parameters<typeof this.model.findMany>[0])
+        ])
+        const totalPage = Math.ceil(total / this.limit);
+        return {
+            data: data as T[],
+            meta: {
+                page: this.page,
+                limit: this.limit,
+                total,
+                totalPage,
+            }
+        }
+    }
+    async count(): Promise<number> {
+        return await this.model.count(this.countQuery as Parameters<typeof this.model.count>[0]);
+    }
+
+    getQuery(): PrismaFindManyArgs {
+        return this.query;
+    }
+
 
     private deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
         const result = { ...target };
