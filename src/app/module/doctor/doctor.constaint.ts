@@ -1,0 +1,2 @@
+export const doctorSearchAbleFields = ["name", "email", "qualification", "designation", "currentWorkingPlace", "registrationNumber", "specialities.speciality.title"];
+export const doctorFilterAbleFields = ["gernder", "isDeleted" , "appointmentFee","experience" , "registrationNumber", "specialities.specialityId", "currentWorkingPlace" , "designation" , "qulification" , "specialities.speciality.title" , "user.role"]

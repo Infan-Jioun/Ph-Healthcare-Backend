@@ -3,24 +3,37 @@ import { IUpdateDoctorPayload } from "./doctor.interface"
 import AppError from "../../errorHelper/appError"
 import status from "http-status"
 import { Status } from "../../../generated/prisma/enums"
+import { QueryBuilder } from "../../utils/QueryBuild"
+import { Prisma } from "../../../generated/prisma/browser"
+import { doctorFilterAbleFields, doctorSearchAbleFields } from "./doctor.constaint"
+import { IQueryParams } from "../../interface/query.interface"
 
-const getAllDoctor = async () => {
-    const doctors = await prisma.doctor.findMany({
-        // * ekane delete use hoise soft delete korar deka nai jai moto
-        where: { isDeleted: false },
-        include: {
-            user: true,
-            speciality: {
-                include: {
-                    speciality: true
-                }
-            }
+const getAllDoctor = async (query: IQueryParams) => {
+    // const doctors = await prisma.doctor.findMany({
+    // * ekane delete use hoise soft delete korar deka nai jai moto
+    //     where: { isDeleted: false },
+    //     include: {
+    //         user: true,
+    //         speciality: {
+    //             include: {
+    //                 speciality: true
+    //             }
+    //         }
+    //     }
+
+    // })
+    // return doctors
+    const queryBuilder = new QueryBuilder<Doctor, Prisma.DoctorWhereInput, Prisma.DoctorInclude>(
+        prisma.doctor,
+        query,
+        {
+            searchAbleFields: doctorSearchAbleFields,
+            filterAbleFields: doctorFilterAbleFields
         }
-
-    })
-    return doctors
+    )
 
 }
+
 const getDoctorById = async (id: string) => {
 
     const doctor = await prisma.doctor.findFirst({
