@@ -15,8 +15,7 @@ export const createDoctorZodSchema = z.object({
         currentWorkingPlace: z.string("Current working place is required").min(2, "Current working place must be ar least 2 chracters"),
         designation: z.string("Designation is required").min(2, "Designation must be at least 2 chracters ").max(50, "Designation must be at most 50 characters")
     }),
-    speciality: z.array(z.uuid(), "Specialities must be an array of strnigs ").min(1, "At least one Specialities is required")
-
+    specialities: z.array(z.uuid(), "Specialities must be an array of strnigs ").min(1, "At least one Specialities is required")
 })
 // !ADMIN
 

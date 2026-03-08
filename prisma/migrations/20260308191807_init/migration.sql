@@ -263,7 +263,7 @@ CREATE TABLE "doctor_schedules" (
 );
 
 -- CreateTable
-CREATE TABLE "speclities" (
+CREATE TABLE "speciality" (
     "id" TEXT NOT NULL,
     "title" VARCHAR(100) NOT NULL,
     "description" TEXT,
@@ -273,7 +273,7 @@ CREATE TABLE "speclities" (
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "speclities_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "speciality_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -407,13 +407,13 @@ CREATE INDEX "doctor_schedules_scheduleId_idx" ON "doctor_schedules"("scheduleId
 CREATE UNIQUE INDEX "doctor_schedules_doctorId_scheduleId_key" ON "doctor_schedules"("doctorId", "scheduleId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "speclities_title_key" ON "speclities"("title");
+CREATE UNIQUE INDEX "speciality_title_key" ON "speciality"("title");
 
 -- CreateIndex
-CREATE INDEX "idx_speciality_isDeleted" ON "speclities"("isDeleted");
+CREATE INDEX "idx_speciality_isDeleted" ON "speciality"("isDeleted");
 
 -- CreateIndex
-CREATE INDEX "idx_speciality_title" ON "speclities"("title");
+CREATE INDEX "idx_speciality_title" ON "speciality"("title");
 
 -- CreateIndex
 CREATE INDEX "idx_doctor_speciality_doctorId" ON "doctor_speciality"("doctorId");
@@ -494,7 +494,7 @@ ALTER TABLE "doctor_schedules" ADD CONSTRAINT "doctor_schedules_scheduleId_fkey"
 ALTER TABLE "doctor_speciality" ADD CONSTRAINT "doctor_speciality_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "doctor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "doctor_speciality" ADD CONSTRAINT "doctor_speciality_specialityId_fkey" FOREIGN KEY ("specialityId") REFERENCES "speclities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "doctor_speciality" ADD CONSTRAINT "doctor_speciality_specialityId_fkey" FOREIGN KEY ("specialityId") REFERENCES "speciality"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "superAdmin" ADD CONSTRAINT "superAdmin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
