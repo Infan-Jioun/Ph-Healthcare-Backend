@@ -5,7 +5,7 @@ import status from "http-status"
 import { Status } from "../../../generated/prisma/enums"
 import { QueryBuilder } from "../../utils/QueryBuild"
 import { Prisma } from "../../../generated/prisma/browser"
-import { doctorFilterAbleFields, doctorSearchAbleFields } from "./doctor.constaint"
+import { doctorFilterAbleFields, doctorIncludeConfig, doctorSearchAbleFields } from "./doctor.constaint"
 import { IQueryParams } from "../../interface/query.interface"
 
 const getAllDoctor = async (query: IQueryParams) => {
@@ -27,11 +27,31 @@ const getAllDoctor = async (query: IQueryParams) => {
         prisma.doctor,
         query,
         {
-            searchAbleFields: doctorSearchAbleFields,
-            filterAbleFields: doctorFilterAbleFields
+            searchableFields: doctorSearchAbleFields,
+            filterableFields: doctorFilterAbleFields
         }
     )
-
+    const result = await queryBuilder
+        .search()
+        .filter()
+        .where({
+            isDeleted: true
+        })
+        .include({
+            user: true,
+            specialities: true
+            // speciality: {
+            //     include: {
+            //         speciality: true
+            //     }
+            // }
+        })
+        .dynamicInclude(doctorIncludeConfig)
+        .paginate()
+        .sort()
+        .fields()
+        .execute()
+    return result
 }
 
 const getDoctorById = async (id: string) => {

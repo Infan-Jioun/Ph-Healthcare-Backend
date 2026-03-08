@@ -27,7 +27,7 @@
   "homepage": "https://github.com/Infan-Jioun/Ph-Healthcare-Backend#readme",
   "dependencies": {
     "@prisma/adapter-pg": "^7.3.0",
-    "@prisma/client": "^7.3.0",
+    "@prisma/client": "^7.4.2",
     "better-auth": "^1.4.18",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
@@ -56,7 +56,7 @@
     "@types/nodemailer": "^7.0.11",
     "@types/pg": "^8.16.0",
     "eslint": "^10.0.0",
-    "prisma": "^7.4.0",
+    "prisma": "^7.4.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0"
   }

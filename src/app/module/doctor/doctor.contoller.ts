@@ -3,15 +3,18 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { doctorService } from "./doctor.service";
 import { sendResposne } from "../../../shared/sendResponse";
 import status from "http-status";
+import { IQueryParams } from "../../interface/query.interface";
 
 const getAllDoctor = catchAsync(
     async (req: Request, res: Response) => {
-        const result = await doctorService.getAllDoctor();
+        const query = req.query
+        const result = await doctorService.getAllDoctor(query as IQueryParams);
         sendResposne(res, {
             httpStatusCode: status.OK,
             success: true,
             message: "Successfully fetch all doctors",
-            data: result
+            data: result.data,
+            meta: result.meta
         })
 
 
@@ -48,7 +51,7 @@ const updateDoctor = catchAsync(
 const deleteDoctor = catchAsync(
     async (req: Request, res: Response) => {
         const { id } = req.params;
-        const result = await doctorService.deleteDoctor(id as string, );
+        const result = await doctorService.deleteDoctor(id as string,);
         sendResposne(res, {
             httpStatusCode: status.OK,
             success: true,

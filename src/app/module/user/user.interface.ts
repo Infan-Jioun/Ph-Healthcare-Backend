@@ -16,7 +16,7 @@ export interface ICreateDoctorPayload {
         currentWorkingPlace: string
         designation: string
     }
-    specialities: string[]
+    speciality: string[]
 }
 // Add this interface to user.interface.ts
 

@@ -9,7 +9,7 @@ import { ICreateAdmin, ICreateDoctorPayload, ICreateSuperAdmin } from "./user.in
 
 const createDoctor = async (payload: ICreateDoctorPayload) => {
     const specialities: Speciality[] = [];
-    for (const specialityId of payload.specialities) {
+    for (const specialityId of payload.speciality) {
         const speciality = await prisma.speciality.findUnique({
             where: {
                 id: specialityId

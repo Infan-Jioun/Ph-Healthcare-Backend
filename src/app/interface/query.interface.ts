@@ -1,47 +1,67 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export interface PrismaFindManyAegs {
-    where?: Record<string, unknown>;
-    innclude?: Record<string, unknown>;
-    select?: Record<string, boolean | Record<string, unknown>>;
-    orderBy?: Record<string, unknown> | Record<string, unknown>;
-    skip?: number,
-    take?: number,
-    cursor?: Record<string, unknown>;
-    distinct?: string[] | string;
-    [key: string]: unknown;
 
-}
-export interface PrismaCountAegs {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
+export interface PrismaFindManyArgs {
     where?: Record<string, unknown>;
     include?: Record<string, unknown>;
-    select?: Record<string, boolean | Record<string, unknown>>;
-    orderBy?: Record<string, unknown> | Record<string, unknown>;
-    skip?: number,
-    take?: number,
+    select?: Record<string, boolean | Record<string, unknown>>
+    orderBy?: Record<string, unknown> | Record<string, unknown>[];
+    skip?: number;
+    take?: number;
     cursor?: Record<string, unknown>;
     distinct?: string[] | string;
     [key: string]: unknown;
+}
 
+export interface PrismaCountArgs {
+    where?: Record<string, unknown>;
+    include?: Record<string, unknown>;
+    select?: Record<string, boolean | Record<string, unknown>>
+    orderBy?: Record<string, unknown> | Record<string, unknown>[];
+    skip?: number;
+    take?: number;
+    cursor?: Record<string, unknown>;
+    distinct?: string[] | string;
+    [key: string]: unknown;
 }
-export interface PrismaModelDelegets {
+
+export interface PrismaModelDelegate {
     findMany(args?: any): Promise<any[]>;
-    count(args?: any): Promise<number>
+    count(args?: any): Promise<number>;
 }
+
 export interface IQueryParams {
-    searchItem?: string;
+    searchTerm?: string;
     page?: string;
     limit?: string;
     sortBy?: string;
-    sortOrder?: "asc" | "desc";
+    sortOrder?: 'asc' | 'desc';
     fields?: string;
     includes?: string;
-    [key: string]: string | undefined
+    [key: string]: string | undefined;
+}
 
-}
 export interface IQueryConfig {
-    searchAbleFields?: string[];
-    filterAbleFields?: string[]
+    searchableFields?: string[];
+    filterableFields?: string[];
 }
+
+export interface PrismaStringFilter {
+    contains?: string;
+    startsWith?: string;
+    endsWith?: string;
+    mode?: 'insensitive' | 'default';
+    equals?: string;
+    in?: string[];
+    notIn?: string[];
+    lt?: string;
+    lte?: string;
+    gt?: string;
+    gte?: string;
+    not?: PrismaStringFilter | string;
+}
+
 export interface PrismaNumberFilter {
     equals?: number;
     in?: number[];
@@ -50,35 +70,22 @@ export interface PrismaNumberFilter {
     lte?: number;
     gt?: number;
     gte?: number;
-    not?: PrismaNumberFilter | number
+    not?: PrismaNumberFilter | number;
 }
 
-export interface PrismaStringFilter {
-    contains?: string
-    startsWith?: string;
-    endsWith?: string;
-    node?: "insensitive" | "default";
-    equals?: string;
-    in?: string[];
-    notIn?: string[];
-    lt?: string;
-    gt?: string;
-    gte?: string;
-    not?: PrismaStringFilter | string;
-
-}
 export interface PrismaWhereConditions {
     OR?: Record<string, unknown>[];
     AND?: Record<string, unknown>[];
     NOT?: Record<string, unknown>[];
-    [key: string]: unknown
+    [key: string]: unknown;
 }
+
 export interface IQueryResult<T> {
     data: T[];
     meta: {
         page: number;
         limit: number;
         total: number;
-        totalPage: number;
+        totalPages: number;
     }
 }
