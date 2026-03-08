@@ -87,19 +87,14 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
                             isDeleted: true,
                             createdAt: true,
                             updatedAt: true
-                        }
+                        },
+
                     },
-                    speciality: {
-                        select: {
-                            speciality: {
-                                select: {
-                                    title: true,
-                                    id: true
-                                }
-                            }
-                        }
-                    }
+                    specialities: true
+
                 }
+
+
             })
             return doctor;
 
