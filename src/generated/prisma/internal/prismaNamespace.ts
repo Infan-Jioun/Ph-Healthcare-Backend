@@ -2015,10 +2015,8 @@ export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof 
 
 export const ScheduleScalarFieldEnum = {
   id: 'id',
-  startTime: 'startTime',
-  endTime: 'endTime',
-  startDate: 'startDate',
-  endDate: 'endDate',
+  startDateTime: 'startDateTime',
+  endDateTime: 'endDateTime',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
