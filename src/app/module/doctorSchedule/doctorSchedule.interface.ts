@@ -1,5 +1,5 @@
 export interface ICreateDoctorSchedulePayload {
-    schedule: string[]
+    scheduleIds: string[]
 }
 export interface IUpdateDoctorSchedulePayload {
     scheduleIds: {
