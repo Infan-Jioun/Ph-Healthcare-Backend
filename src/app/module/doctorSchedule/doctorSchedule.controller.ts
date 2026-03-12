@@ -4,7 +4,7 @@ import { doctorScheduleService } from "./doctorSchedule.service";
 import { sendResposne } from "../../../shared/sendResponse";
 import status from "http-status";
 import { IRequestUser } from "../../interface/requestUserInterface";
-import { ICreateDoctorSchedulePayload } from "./doctorSchedule.interface";
+import { ICreateDoctorSchedulePayload, IUpdateDoctorSchedulePayload } from "./doctorSchedule.interface";
 
 const createMyDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
 
@@ -18,7 +18,19 @@ const createMyDoctorSchedule = catchAsync(async (req: Request, res: Response) =>
 
     })
 })
-
+const updateMyDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id
+    const payload = req.body;
+    const user = req.user;
+    const updateSchedule = await doctorScheduleService.updateMyDoctorSchedule(id as string, user as IRequestUser, payload as IUpdateDoctorSchedulePayload);
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        success: true,
+        message: "Successfully updated Doctor Schedule!",
+        data: updateSchedule,
+    })
+})
 export const doctorSchedule = {
-    createMyDoctorSchedule
+    createMyDoctorSchedule,
+    updateMyDoctorSchedule
 }
