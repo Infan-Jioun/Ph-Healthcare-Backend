@@ -78,7 +78,9 @@ const updateMyDoctorSchedule = catchAsync(async (req: Request, res: Response) =>
     })
 })
 const deleteMyDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
-    const deleteDoctor = await doctorScheduleService.deleteMyDoctorSchedule()
+    const id = req.params.id;
+    const user = req.user
+    const deleteDoctor = await doctorScheduleService.deleteMyDoctorSchedule(id as string, user as IRequestUser)
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,
