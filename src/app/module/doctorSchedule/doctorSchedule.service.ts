@@ -17,6 +17,16 @@ const createMyDoctorSchedule = async (user: IRequestUser, payload: ICreateDoctor
     })
     return result
 }
+const getMyDoctorSchedules = async () => {
+
+}
+const getAllDoctorSchedules = async () => {
+
+}
+
+const getDoctorScheduleById = async () => {
+
+}
 const updateMyDoctorSchedule = async (id: string, user: IRequestUser, payload: IUpdateDoctorSchedulePayload) => {
     const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
@@ -45,7 +55,14 @@ const updateMyDoctorSchedule = async (id: string, user: IRequestUser, payload: I
     })
 
 }
+const deleteMyDoctorSchedule = async () => {
+
+}
 export const doctorScheduleService = {
     createMyDoctorSchedule,
-    updateMyDoctorSchedule
+    getMyDoctorSchedules,
+    getAllDoctorSchedules,
+    updateMyDoctorSchedule,
+    getDoctorScheduleById,
+    deleteMyDoctorSchedule
 }
