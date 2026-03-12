@@ -3,9 +3,13 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { doctorScheduleService } from "./doctorSchedule.service";
 import { sendResposne } from "../../../shared/sendResponse";
 import status from "http-status";
+import { IRequestUser } from "../../interface/requestUserInterface";
+import { ICreateDoctorSchedulePayload } from "./doctorSchedule.interface";
 
 const createMyDoctorSchedule = catchAsync(async (req: Request, res: Response) => {
-    const doctorSchedule = await doctorScheduleService.createMyDoctorSchedule();
+
+    const payload = req.body
+    const doctorSchedule = await doctorScheduleService.createMyDoctorSchedule(req.user as IRequestUser, payload as ICreateDoctorSchedulePayload);
     sendResposne(res, {
         httpStatusCode: status.CREATED,
         success: true,
@@ -14,6 +18,7 @@ const createMyDoctorSchedule = catchAsync(async (req: Request, res: Response) =>
 
     })
 })
+
 export const doctorSchedule = {
     createMyDoctorSchedule
 }
