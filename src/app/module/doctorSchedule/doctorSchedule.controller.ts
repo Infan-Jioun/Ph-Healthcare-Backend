@@ -27,7 +27,13 @@ const getMyDoctorSchedules = catchAsync(async (req: Request, res: Response) => {
         httpStatusCode: status.OK,
         success: true,
         message: "Successfully Get Doctor Schedule!",
-        data: getMyDoctor,
+        data: getMyDoctor.data,
+        meta: {
+            page: getMyDoctor.meta.page,
+            limit: getMyDoctor.meta.limit,
+            total: getMyDoctor.meta.total,
+            totalPage: getMyDoctor.meta.totalPages
+        }
 
     })
 })
