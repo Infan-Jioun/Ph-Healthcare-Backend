@@ -55,7 +55,9 @@ const getAllDoctorSchedules = catchAsync(async (req: Request, res: Response) => 
     })
 })
 const getDoctorScheduleById = catchAsync(async (req: Request, res: Response) => {
-    const getDoctorById = await doctorScheduleService.getDoctorScheduleById()
+    const doctorId = req.params.doctorId;
+    const scheduleId = req.params.scheduleId
+    const getDoctorById = await doctorScheduleService.getDoctorScheduleById(doctorId as string, scheduleId as string)
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,
