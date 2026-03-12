@@ -38,12 +38,19 @@ const getMyDoctorSchedules = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const getAllDoctorSchedules = catchAsync(async (req: Request, res: Response) => {
-    const getAllDoctor = await doctorScheduleService.getAllDoctorSchedules()
+    const query = req.query;
+    const getAllDoctor = await doctorScheduleService.getAllDoctorSchedules(query as IQueryParams)
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,
         message: "Successfully Get All Doctor Schedule!",
         data: getAllDoctor,
+        meta: {
+            page: getAllDoctor.meta.page,
+            limit: getAllDoctor.meta.limit,
+            total: getAllDoctor.meta.total,
+            totalPage: getAllDoctor.meta.totalPages
+        }
 
     })
 })
