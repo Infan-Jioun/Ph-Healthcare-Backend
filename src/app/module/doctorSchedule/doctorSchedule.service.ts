@@ -1,5 +1,9 @@
+import { DoctorSchedules, Prisma } from "../../../generated/prisma/client"
+import { IQueryParams } from "../../interface/query.interface"
 import { IRequestUser } from "../../interface/requestUserInterface"
 import { prisma } from "../../lib/prisma"
+import { QueryBuilder } from "../../utils/QueryBuild"
+import { doctorScheduleFilterAbleFileds, doctorScheduleIncludeConfig, doctorScheduleSearchFilterAbleField } from "./doctorSchedule.constaint"
 import { ICreateDoctorSchedulePayload, IUpdateDoctorSchedulePayload } from "./doctorSchedule.interface"
 
 const createMyDoctorSchedule = async (user: IRequestUser, payload: ICreateDoctorSchedulePayload) => {
@@ -17,8 +21,40 @@ const createMyDoctorSchedule = async (user: IRequestUser, payload: ICreateDoctor
     })
     return result
 }
-const getMyDoctorSchedules = async () => {
-
+const getMyDoctorSchedules = async (user: IRequestUser, query: IQueryParams) => {
+    const doctorData = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            email: user.email
+        }
+    });
+    //* create Query
+    const queryBuilder = new QueryBuilder<DoctorSchedules, Prisma.DoctorSchedulesWhereInput, Prisma.DoctorSchedulesInclude>(
+        prisma.doctorSchedules, {
+        doctorId: doctorData.id,
+        ...query
+    },
+        {
+            filterableFields: doctorScheduleFilterAbleFileds,
+            searchableFields: doctorScheduleSearchFilterAbleField
+        }
+    )
+    const doctorSchedule = await queryBuilder
+        .search()
+        .filter()
+        .paginate()
+        .include({
+            schedule: true,
+            doctor: {
+                include: {
+                    user: true
+                }
+            }
+        })
+        .sort()
+        .fields()
+        .dynamicInclude(doctorScheduleIncludeConfig)
+        .execute()
+    return doctorSchedule
 }
 const getAllDoctorSchedules = async () => {
 
