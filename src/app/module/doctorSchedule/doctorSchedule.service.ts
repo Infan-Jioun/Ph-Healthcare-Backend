@@ -27,7 +27,7 @@ const getAllDoctorSchedules = async () => {
 const getDoctorScheduleById = async () => {
 
 }
-const updateMyDoctorSchedule = async (id: string, user: IRequestUser, payload: IUpdateDoctorSchedulePayload) => {
+const updateMyDoctorSchedule = async (user: IRequestUser, payload: IUpdateDoctorSchedulePayload) => {
     const doctorData = await prisma.doctor.findUniqueOrThrow({
         where: {
             email: user.email

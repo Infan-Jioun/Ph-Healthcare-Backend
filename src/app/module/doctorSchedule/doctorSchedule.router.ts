@@ -14,7 +14,7 @@ router.get("/", checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     doctorSchedule.getAllDoctorSchedules);
 router.get("/:doctorId/schedule/:scheduleId", checkAuth(Role.ADMIN, Role.
     SUPER_ADMIN), doctorSchedule.getDoctorScheduleById);
-router.patch("/update-my-doctor-schedule/:id",
+router.patch("/update-my-doctor-schedule",
     checkAuth(Role.DOCTOR),
     doctorSchedule.updateMyDoctorSchedule);
 router.delete("/delete-my-doctor-schedule/:id", checkAuth(Role.DOCTOR),
