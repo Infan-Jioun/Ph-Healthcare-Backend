@@ -1,3 +1,4 @@
+import { uuidv7 } from "zod"
 import { IRequestUser } from "../../interface/requestUserInterface"
 import { prisma } from "../../lib/prisma"
 import { IBookAppointmentPayload } from "./appointment.interface"
@@ -28,6 +29,18 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
             }
         }
     })
+    const videoCallingId = String(uuidv7());
+    const result = await prisma.$transaction(async (tx) => {
+        const appointmentData = await tx.appointment.create({
+            data: {
+                doctorId: payload.doctorId,
+                patientId: patientData.id,
+                scheduleId: doctorScheduleData.scheduleId,
+                videoCallingId
+            }
+        })
+    });
+    
 }
 const getMyAppointments = () => {
 
