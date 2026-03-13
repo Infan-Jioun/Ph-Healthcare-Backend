@@ -14,7 +14,13 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
             isDeleted: false
         }
     })
-    
+    const scheduleData = await prisma.schedule.findUniqueOrThrow({
+        where: {
+            id: payload.scheduleId,
+
+        }
+    })
+
 }
 const getMyAppointments = () => {
 
