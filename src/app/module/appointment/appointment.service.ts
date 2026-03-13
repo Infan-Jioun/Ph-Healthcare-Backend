@@ -50,8 +50,10 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
 
                 isBooked: true
             }
-        })
+        });
+        return appointmentData
     });
+    return result;
 
 }
 const getMyAppointments = () => {
