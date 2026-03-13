@@ -1,5 +1,13 @@
-const bookAppointment = () => {
+import { IRequestUser } from "../../interface/requestUserInterface"
+import { prisma } from "../../lib/prisma"
+import { IBookAppointmentPayload } from "./appointment.interface"
 
+const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayload) => {
+    const patientData = await prisma.patient.findUniqueOrThrow({
+        where: {
+            email: user.email
+        }
+    })
 }
 const getMyAppointments = () => {
 

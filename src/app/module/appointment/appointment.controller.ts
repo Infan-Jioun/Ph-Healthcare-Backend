@@ -3,9 +3,13 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { appointmentService } from "./appointment.service";
 import { sendResposne } from "../../../shared/sendResponse";
 import status from "http-status";
+import { IRequestUser } from "../../interface/requestUserInterface";
+import { IBookAppointmentPayload } from "./appointment.interface";
 
 const bookAppointment = catchAsync(async (req: Request, res: Response) => {
-    const bookData = appointmentService.bookAppointment();
+    const user = req.user;
+    const payload = req.body;
+    const bookData = appointmentService.bookAppointment(user as IRequestUser, payload as IBookAppointmentPayload);
     sendResposne(res, {
         httpStatusCode: status.CREATED,
         message: "Successfully Created Appointment",
@@ -32,7 +36,7 @@ const getAllAppointments = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const getMySingleAppointment = catchAsync(async (req: Request, res: Response) => {
-    const singleData = appointmentService.bookAppointment();
+    const singleData = appointmentService.getMySingleAppointment();
     sendResposne(res, {
         httpStatusCode: status.OK,
         message: "Successfully Get My Single Appointment",
