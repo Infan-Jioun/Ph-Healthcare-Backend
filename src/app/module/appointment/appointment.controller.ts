@@ -1,0 +1,60 @@
+import { Request, Response } from "express";
+import { catchAsync } from "../../../shared/catchAsync";
+import { appointmentService } from "./appointment.service";
+import { sendResposne } from "../../../shared/sendResponse";
+import status from "http-status";
+
+const bookAppointment = catchAsync(async (req: Request, res: Response) => {
+    const bookData = appointmentService.bookAppointment();
+    sendResposne(res, {
+        httpStatusCode: status.CREATED,
+        message: "Successfully Created Appointment",
+        success: true,
+        data: bookData
+    })
+})
+const getMyAppointments = catchAsync(async (req: Request, res: Response) => {
+    const getMyAllData = appointmentService.getMyAppointments();
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        message: "Successfully Get All My Appointment",
+        success: true,
+        data: getMyAllData
+    })
+})
+const getAllAppointments = catchAsync(async (req: Request, res: Response) => {
+    const getAllData = appointmentService.getAllAppointments();
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        message: "Successfully All Appointment",
+        success: true,
+        data: getAllData
+    })
+})
+const getMySingleAppointment = catchAsync(async (req: Request, res: Response) => {
+    const singleData = appointmentService.bookAppointment();
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        message: "Successfully Get My Single Appointment",
+        success: true,
+        data: singleData
+    })
+})
+const changeAppointmentStatus = catchAsync(async (req: Request, res: Response) => {
+    const changeData = appointmentService.changeAppointmentStatus();
+    sendResposne(res, {
+        httpStatusCode: status.OK,
+        message: "Successfully Change Appointment Status",
+        success: true,
+        data: changeData
+    })
+})
+export const AppointmentController = {
+    bookAppointment,
+    getMyAppointments,
+    getAllAppointments,
+    getMySingleAppointment,
+    changeAppointmentStatus
+
+
+}
