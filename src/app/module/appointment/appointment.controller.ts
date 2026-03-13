@@ -18,7 +18,8 @@ const bookAppointment = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const getMyAppointments = catchAsync(async (req: Request, res: Response) => {
-    const getMyAllData = appointmentService.getMyAppointments();
+    const user = req.user
+    const getMyAllData = appointmentService.getMyAppointments(user as IRequestUser);
     sendResposne(res, {
         httpStatusCode: status.OK,
         message: "Successfully Get All My Appointment",

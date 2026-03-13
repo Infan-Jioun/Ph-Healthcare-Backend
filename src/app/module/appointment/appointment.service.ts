@@ -2,6 +2,8 @@ import { uuidv7 } from "zod"
 import { IRequestUser } from "../../interface/requestUserInterface"
 import { prisma } from "../../lib/prisma"
 import { IBookAppointmentPayload } from "./appointment.interface"
+import AppError from "../../errorHelper/appError"
+import status from "http-status"
 
 const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayload) => {
     const patientData = await prisma.patient.findUniqueOrThrow({
@@ -56,8 +58,44 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
     return result;
 
 }
-const getMyAppointments = () => {
+const getMyAppointments = async (user: IRequestUser) => {
+    const patientData = await prisma.patient.findUniqueOrThrow({
+        where: {
+            email: user.email
+        }
+    })
+    const doctorData = await prisma.doctor.findUniqueOrThrow({
+        where: {
+            email: user.email
+        }
+    })
+    let appointments;
+    if (patientData) {
+        appointments = await prisma.appointment.findMany({
+            where: {
+                patientId: patientData.id
+            },
+            include: {
+                doctor: true,
+                schedule: true
+            }
 
+        })
+    }
+    else if (doctorData) {
+        appointments = await prisma.appointment.findMany({
+            where: {
+                doctorId: doctorData.id
+            },
+            include: {
+                patient: true,
+                schedule: true
+            }
+        })
+    } else {
+        throw new AppError(status.NOT_FOUND, "User not found")
+    }
+    return appointments
 }
 const changeAppointmentStatus = () => {
 
