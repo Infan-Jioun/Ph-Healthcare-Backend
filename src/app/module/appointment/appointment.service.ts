@@ -39,8 +39,20 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
                 videoCallingId
             }
         })
+        await tx.doctorSchedules.update({
+            where: {
+                doctorId_scheduleId: {
+                    doctorId: payload.doctorId,
+                    scheduleId: payload.scheduleId
+                }
+            },
+            data: {
+
+                isBooked: true
+            }
+        })
     });
-    
+
 }
 const getMyAppointments = () => {
 
