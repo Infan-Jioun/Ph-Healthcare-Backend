@@ -20,7 +20,14 @@ const bookAppointment = async (user: IRequestUser, payload: IBookAppointmentPayl
 
         }
     })
-
+    const doctorScheduleData = await prisma.doctorSchedules.findUniqueOrThrow({
+        where: {
+            doctorId_scheduleId: {
+                doctorId: doctorData.id,
+                scheduleId: scheduleData.id
+            }
+        }
+    })
 }
 const getMyAppointments = () => {
 
