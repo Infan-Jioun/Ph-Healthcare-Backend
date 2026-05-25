@@ -52,7 +52,7 @@ const loadEnvVariables = (): EnvConfig => {
         "EMAIL_SENDER_SMTP_PORT",
         "EMAIL_SENDER_SMTP_FORM",
         "GOOGLE_CLINET_ID",
-        "GOOGLE_SECRET",
+        "GOOGLE_CLIENT_SECRET",
         "GOOGLE_CALLBACK_URL",
         "FRONTEND_URL",
         "CLOUDINARY_CLOUD_NAME",

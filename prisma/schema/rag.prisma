@@ -1,0 +1,14 @@
+model DocumentEmbedding {
+    id          String                     @id @default(uuid())
+    chunkKey    String
+    sourceKey   String
+    sourceId    String
+    sourceLebal String?
+    content     String
+    metadata    Json?
+    embedding   Unsupported("vector(384)")
+    isDeleted   Boolean                    @default(false)
+    deletedAt   DateTime?
+    createdAt   DateTime                   @default(now())
+    updatedAt   DateTime                   @updatedAt
+}
