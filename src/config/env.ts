@@ -60,9 +60,9 @@ const loadEnvVariables = (): EnvConfig => {
         "CLOUDINARY_CLOUD_NAME",
         "CLOUDINARY_API_KEY",
         "CLOUDINARY_SECRET",
-        "OPENROUTER_API_KEY",
-        "OPENROUTER_EMBEDDING_MODEL",
-        "OPENTROUTER_LLM_MODEL"
+        // "OPENROUTER_API_KEY",
+        // "OPENROUTER_EMBEDDING_MODEL",
+        // "OPENTROUTER_LLM_MODEL"
 
     ]
     requireEnvVariables.forEach((variable) => {
