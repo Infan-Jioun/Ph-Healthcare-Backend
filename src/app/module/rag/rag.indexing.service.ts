@@ -45,7 +45,18 @@ export class IndexingService {
                     averageRating: doctor.averageRating,
                     experinence: doctor.experience
                 }
+                const chunkKey = `doctor-${doctor.id}`
+                await this.indexDocument(
+                    chunkKey,
+                    "DOCTOR",
+                    doctor.id,
+                    content,
+                    doctor.name,
+                    metaData
+                )
             }
+            indexingCount++
+            console.log(`Indexed ${indexingCount} doctor records successfully.`)
 
         } catch (error) {
             console.log(error)
