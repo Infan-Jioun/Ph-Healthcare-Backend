@@ -1,10 +1,24 @@
 import { prisma } from "../../lib/prisma"
-import { EmbeddingService } from "./rag.embeddingService"
+import { EmbeddingService } from "./rag.embedding.service"
 
 export class IndexingService {
     private embeddingService: EmbeddingService
     constructor() {
         this.embeddingService = new EmbeddingService()
+    }
+    async indexDocument(chunkKey: string,
+        sourceKey: string,
+        sourceId: string,
+        content: string,
+        metaData: Record<string, unknown>
+    ) {
+        try {
+            const embedding = await this.embeddingService.generateEmbedding(content);
+
+
+        } catch (error) {
+            console.log(error)
+        }
     }
     async indexDoctorData() {
         try {
@@ -57,7 +71,11 @@ export class IndexingService {
             }
             indexingCount++
             console.log(`Indexed ${indexingCount} doctor records successfully.`)
-
+            return {
+                success: true,
+                message: `Indexed ${indexingCount} doctor records successfully.`,
+                indexingCount
+            }
         } catch (error) {
             console.log(error)
         }
