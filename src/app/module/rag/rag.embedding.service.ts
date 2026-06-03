@@ -16,7 +16,7 @@ export class EmbeddingService {
             throw new AppError(status.NOT_FOUND, "OPENROUTER_EMBEDDING_MODEL is not set");
         }
     }
-    async generateEmbedding(text: string) {
+    async generateEmbedding(text: string): Promise<number[]> {
         try {
             const response = await fetch(`${this.apiUrl}/embeddings`, {
                 method: "POST",
@@ -29,7 +29,13 @@ export class EmbeddingService {
                     input: text
                 })
             })
+            if (!response.ok) {
+                throw new AppError(status.INTERNAL_SERVER_ERROR, `Failed to generate embedding. Status: ${response.status}, Message: ${await response.text()}`);
+            }
             const data = await response.json();
+            if (!data.data || data.data.length === 0) {
+                throw new AppError(status.INTERNAL_SERVER_ERROR, "Invalid response format from embedding API");
+            }
             return data.data[0].embedding;
         } catch (error) {
             console.log("Error generating embedding:", error);
