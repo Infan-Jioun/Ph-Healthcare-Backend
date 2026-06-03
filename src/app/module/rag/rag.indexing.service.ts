@@ -1,20 +1,49 @@
+import { Prisma } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 import { EmbeddingService } from "./rag.embedding.service"
-
+const toVectorLiteral = (vector: number[]) => {
+    return `[${vector.join(", ")}]`
+}
 export class IndexingService {
     private embeddingService: EmbeddingService
     constructor() {
         this.embeddingService = new EmbeddingService()
     }
-    async indexDocument(chunkKey: string,
-        sourceKey: string,
+    async indexDocument(
+        chunkKey: string,
+        sourceType: string,
         sourceId: string,
         content: string,
-        metaData: Record<string, unknown>
+        sourceLabel?: string,
+        metaData?: Record<string, unknown>
     ) {
         try {
             const embedding = await this.embeddingService.generateEmbedding(content);
-
+            const vertorLiteral = toVectorLiteral(embedding)
+            await prisma.$executeRaw(Prisma.sql`INSERT INTO "document_embeddings" (  
+              "id" , "chunkKey", "sourceType", "sourceId", "content", "embedding", "metadata" , "updatedAt", "createdAt") VALUES(
+                ${Prisma.raw("gen_rendom_uuid()")},
+                ${chunkKey},
+                ${sourceType},
+                ${sourceId},
+                ${null}
+                ${content},
+                ${sourceLabel || null},
+                ${JSON.stringify(metaData) || null} :: jsonb,
+                CAST(${vertorLiteral} AS vector),
+                NOW(),
+              )
+              ON CONFLICT ("chunkKey") DO UPDATE SET
+              "sourceType" = EXCLUDED."sourceType",
+                "sourceId" = EXCLUDED."sourceId",
+                "content" = EXCLUDED."content",
+                "embedding" = EXCLUDED."embedding",
+                "metadata" = EXCLUDED."metadata",
+                "updatedAt" = NOW(),
+                "isDeleted" = false,
+                "deletedAt" = null,
+                "updatedAt" = NOW()
+              `)
 
         } catch (error) {
             console.log(error)
@@ -55,9 +84,9 @@ export class IndexingService {
                 const metaData = {
                     doctorId: doctor.id,
                     name: doctor.name,
-                    speaciliaties: doctor.specialities.map((ds) => ds.speciality.title),
+                    specialities: doctor.specialities.map((ds) => ds.speciality.title),
                     averageRating: doctor.averageRating,
-                    experinence: doctor.experience
+                    experience: doctor.experience
                 }
                 const chunkKey = `doctor-${doctor.id}`
                 await this.indexDocument(
