@@ -301,7 +301,7 @@ export const DocumentEmbeddingScalarFieldEnum = {
   chunkKey: 'chunkKey',
   sourceKey: 'sourceKey',
   sourceId: 'sourceId',
-  sourceLebal: 'sourceLebal',
+  sourceLabel: 'sourceLabel',
   content: 'content',
   metadata: 'metadata',
   isDeleted: 'isDeleted',

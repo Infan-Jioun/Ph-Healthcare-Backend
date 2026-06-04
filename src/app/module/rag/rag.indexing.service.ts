@@ -1,20 +1,23 @@
 import { Prisma } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 import { EmbeddingService } from "./rag.embedding.service"
+
 const toVectorLiteral = (vector: number[]) => {
     return `[${vector.join(", ")}]`
 }
+
 export class IndexingService {
     private embeddingService: EmbeddingService
     constructor() {
         this.embeddingService = new EmbeddingService()
     }
+
     async indexDocument(
         chunkKey: string,
-        sourceType: string,
+        sourceKey: string,       // ✅ sourceType → sourceKey
         sourceId: string,
         content: string,
-        sourceLabel?: string,
+        sourceLabel?: string,    // ✅ schema র typo match করা
         metaData?: Record<string, unknown>
     ) {
         try {
@@ -22,43 +25,44 @@ export class IndexingService {
             const vectorLiteral = toVectorLiteral(embedding);
 
             await prisma.$executeRaw(Prisma.sql`
-            INSERT INTO "document_embeddings" (
-                "id",
-                "chunkKey",
-                "sourceType",
-                "sourceId",
-                "sourceLabel",
-                "content",
-                "embedding",
-                "metadata",
-                "updatedAt"
-            ) VALUES (
-                ${Prisma.raw("gen_random_uuid()")},
-                ${chunkKey},
-                ${sourceType},
-                ${sourceId},
-                ${sourceLabel || null},
-                ${content},
-                CAST(${vectorLiteral} AS vector),
-                ${JSON.stringify(metaData || {})}::jsonb,
-                NOW()
-            )
-            ON CONFLICT ("chunkKey") DO UPDATE SET
-                "sourceType" = EXCLUDED."sourceType",
-                "sourceId" = EXCLUDED."sourceId",
-                "content" = EXCLUDED."content",
-                "embedding" = EXCLUDED."embedding",
-                "metadata" = EXCLUDED."metadata",
-                "isDeleted" = false,
-                "deletedAt" = null,
-                "updatedAt" = NOW()
-        `);
+                INSERT INTO "document_embeddings" (
+                    "id",
+                    "chunkKey",
+                    "sourceKey",
+                    "sourceId",
+                    "sourceLabel",
+                    "content",
+                    "embedding",
+                    "metadata",
+                    "updatedAt"
+                ) VALUES (
+                    ${Prisma.raw("gen_random_uuid()")},
+                    ${chunkKey},
+                    ${sourceKey},
+                    ${sourceId},
+                    ${sourceLabel || null},
+                    ${content},
+                    CAST(${vectorLiteral} AS vector),
+                    ${JSON.stringify(metaData || {})}::jsonb,
+                    NOW()
+                )
+                ON CONFLICT ("chunkKey") DO UPDATE SET
+                    "sourceKey" = EXCLUDED."sourceKey",
+                    "sourceId" = EXCLUDED."sourceId",
+                    "content" = EXCLUDED."content",
+                    "embedding" = EXCLUDED."embedding",
+                    "metadata" = EXCLUDED."metadata",
+                    "isDeleted" = false,
+                    "deletedAt" = null,
+                    "updatedAt" = NOW()
+            `);
 
         } catch (error) {
             console.log(error);
             throw error;
         }
     }
+
     async indexDoctorData() {
         try {
             console.log("Fetching doctor data for indexing")
@@ -66,31 +70,32 @@ export class IndexingService {
                 where: { isDeleted: false },
                 include: {
                     specialities: {
-                        include: {
-                            speciality: true
-                        }
+                        include: { speciality: true }
                     },
                     reviews: true
                 }
             })
+
             let indexingCount = 0
-            //** Format Specialities */
+
             for (const doctor of doctors) {
-                const speaciliaties = doctor.specialities.map((ds) => ds.speciality.title).join("\n")
-                //** Format Reviews */
-                const reviewsText = doctor.reviews.map((r) => `- Rating: ${r.rating}/5. Comment: ${r.comment || "No Comment"}`);
+                const specialties = doctor.specialities.map((ds) => ds.speciality.title).join("\n")
+                const reviewsText = doctor.reviews
+                    .map((r) => `- Rating: ${r.rating}/5. Comment: ${r.comment || "No Comment"}`)
+                    .join("\n")
 
                 const content = `Doctor Name: ${doctor.name}
-                Experience: ${doctor.experience} years
-                Qualification: ${doctor.qualification}
-                Designation: ${doctor.designation}
-                Appointment Fee: $${doctor.appointmentFee}
-                Current Working Place: ${doctor.currentWorkingPlace}
-                Average Rating: ${doctor.averageRating}/5
-                Specialties: ${speaciliaties || "None listed"}
+Experience: ${doctor.experience} years
+Qualification: ${doctor.qualification}
+Designation: ${doctor.designation}
+Appointment Fee: $${doctor.appointmentFee}
+Current Working Place: ${doctor.currentWorkingPlace}
+Average Rating: ${doctor.averageRating}/5
+Specialties: ${specialties || "None listed"}
 
-                Patient Reviews:
-                ${reviewsText || "No reviews yet."}`;
+Patient Reviews:
+${reviewsText || "No reviews yet."}`
+
                 const metaData = {
                     doctorId: doctor.id,
                     name: doctor.name,
@@ -98,17 +103,20 @@ export class IndexingService {
                     averageRating: doctor.averageRating,
                     experience: doctor.experience
                 }
+
                 const chunkKey = `doctor-${doctor.id}`
+
                 await this.indexDocument(
                     chunkKey,
-                    "DOCTOR",
+                    "DOCTOR",        // ✅ sourceKey
                     doctor.id,
                     content,
-                    doctor.name,
+                    doctor.name,     // ✅ sourceLabel
                     metaData
                 )
+                indexingCount++     // ✅ loop এর ভেতরে নেওয়া হয়েছে
             }
-            indexingCount++
+
             console.log(`Indexed ${indexingCount} doctor records successfully.`)
             return {
                 success: true,
