@@ -19,34 +19,44 @@ export class IndexingService {
     ) {
         try {
             const embedding = await this.embeddingService.generateEmbedding(content);
-            const vertorLiteral = toVectorLiteral(embedding)
-            await prisma.$executeRaw(Prisma.sql`INSERT INTO "document_embeddings" (  
-              "id" , "chunkKey", "sourceType", "sourceId", "content", "embedding", "metadata" , "updatedAt", "createdAt") VALUES(
-                ${Prisma.raw("gen_rendom_uuid()")},
+            const vectorLiteral = toVectorLiteral(embedding);
+
+            await prisma.$executeRaw(Prisma.sql`
+            INSERT INTO "document_embeddings" (
+                "id",
+                "chunkKey",
+                "sourceType",
+                "sourceId",
+                "sourceLabel",
+                "content",
+                "embedding",
+                "metadata",
+                "updatedAt"
+            ) VALUES (
+                ${Prisma.raw("gen_random_uuid()")},
                 ${chunkKey},
                 ${sourceType},
                 ${sourceId},
-                ${null}
-                ${content},
                 ${sourceLabel || null},
-                ${JSON.stringify(metaData) || null} :: jsonb,
-                CAST(${vertorLiteral} AS vector),
-                NOW(),
-              )
-              ON CONFLICT ("chunkKey") DO UPDATE SET
-              "sourceType" = EXCLUDED."sourceType",
+                ${content},
+                CAST(${vectorLiteral} AS vector),
+                ${JSON.stringify(metaData || {})}::jsonb,
+                NOW()
+            )
+            ON CONFLICT ("chunkKey") DO UPDATE SET
+                "sourceType" = EXCLUDED."sourceType",
                 "sourceId" = EXCLUDED."sourceId",
                 "content" = EXCLUDED."content",
                 "embedding" = EXCLUDED."embedding",
                 "metadata" = EXCLUDED."metadata",
-                "updatedAt" = NOW(),
                 "isDeleted" = false,
                 "deletedAt" = null,
                 "updatedAt" = NOW()
-              `)
+        `);
 
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            throw error;
         }
     }
     async indexDoctorData() {
@@ -107,6 +117,7 @@ export class IndexingService {
             }
         } catch (error) {
             console.log(error)
+            throw error
         }
     }
 }

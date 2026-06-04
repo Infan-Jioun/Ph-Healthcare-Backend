@@ -1,3 +1,6 @@
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "vector";
+
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'PATIENT');
 
@@ -44,7 +47,7 @@ CREATE TABLE "appointments" (
     "patientId" TEXT NOT NULL,
     "doctorId" TEXT NOT NULL,
     "scheduleId" TEXT NOT NULL,
-    "videoCallingId" TEXT NOT NULL,
+    "videoCallingId" UUID NOT NULL,
     "status" "AppointmentStatus" NOT NULL DEFAULT 'SCHEDULED',
     "paymentStatus" "PaymentStatus" NOT NULL DEFAULT 'UNPAID',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -203,7 +206,8 @@ CREATE TABLE "payments" (
     "id" TEXT NOT NULL,
     "ammount" DOUBLE PRECISION NOT NULL,
     "status" "PaymentStatus" NOT NULL DEFAULT 'UNPAID',
-    "transactionId" TEXT NOT NULL,
+    "transactionId" UUID NOT NULL,
+    "stripeEventId" TEXT,
     "paymentGateWayData" JSONB,
     "appointmentId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -227,6 +231,24 @@ CREATE TABLE "prescriptions" (
 );
 
 -- CreateTable
+CREATE TABLE "document_embeddings" (
+    "id" TEXT NOT NULL,
+    "chunkKey" TEXT NOT NULL,
+    "sourceKey" TEXT NOT NULL,
+    "sourceId" TEXT NOT NULL,
+    "sourceLebal" TEXT,
+    "content" TEXT NOT NULL,
+    "metadata" JSONB,
+    "embedding" vector(2048) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "deletedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "document_embeddings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "reviews" (
     "id" TEXT NOT NULL,
     "patientId" TEXT NOT NULL,
@@ -243,10 +265,8 @@ CREATE TABLE "reviews" (
 -- CreateTable
 CREATE TABLE "schedules" (
     "id" TEXT NOT NULL,
-    "startTime" TIMESTAMP(3) NOT NULL,
-    "endTime" TIMESTAMP(3) NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3) NOT NULL,
+    "startDateTime" TIMESTAMP(3) NOT NULL,
+    "endDateTime" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -311,6 +331,12 @@ CREATE UNIQUE INDEX "admin_email_key" ON "admin"("email");
 CREATE UNIQUE INDEX "admin_userId_key" ON "admin"("userId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "appointments_id_key" ON "appointments"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "appointments_videoCallingId_key" ON "appointments"("videoCallingId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
@@ -363,6 +389,9 @@ CREATE INDEX "patient_health_data_patientId_idx" ON "patient_health_data"("patie
 
 -- CreateIndex
 CREATE UNIQUE INDEX "payments_transactionId_key" ON "payments"("transactionId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "payments_stripeEventId_key" ON "payments"("stripeEventId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "payments_appointmentId_key" ON "payments"("appointmentId");

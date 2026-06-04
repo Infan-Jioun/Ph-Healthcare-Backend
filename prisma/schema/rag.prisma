@@ -1,14 +1,16 @@
 model DocumentEmbedding {
-    id          String                     @id @default(uuid())
-    chunkKey    String
+    id          String                      @id @default(uuid())
+    chunkKey    String                      @unique 
     sourceKey   String
     sourceId    String
-    sourceLebal String?
+    sourceLabel String?
     content     String
     metadata    Json?
-    embedding   Unsupported("vector(384)")
-    isDeleted   Boolean                    @default(false)
+    embedding   Unsupported("vector(2048)")
+    isDeleted   Boolean                     @default(false)
     deletedAt   DateTime?
-    createdAt   DateTime                   @default(now())
-    updatedAt   DateTime                   @updatedAt
+    createdAt   DateTime                    @default(now())
+    updatedAt   DateTime                    @updatedAt
+
+    @@map("document_embeddings")
 }
