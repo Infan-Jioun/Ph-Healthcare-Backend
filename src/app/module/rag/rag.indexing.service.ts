@@ -14,10 +14,10 @@ export class IndexingService {
 
     async indexDocument(
         chunkKey: string,
-        sourceKey: string,       // ✅ sourceType → sourceKey
+        sourceKey: string,       
         sourceId: string,
         content: string,
-        sourceLabel?: string,    // ✅ schema র typo match করা
+        sourceLabel?: string,    
         metaData?: Record<string, unknown>
     ) {
         try {
@@ -127,5 +127,34 @@ ${reviewsText || "No reviews yet."}`
             console.log(error)
             throw error
         }
+    }
+    async retiveRelevantDocuments(query: string, limit: number = 5, sourceType?: string) {
+        try {
+            const queryEmbedding = await this.embeddingService.generateEmbedding(query);
+            const vectorLiteral = `[${queryEmbedding.join(", ")}]`
+            const results = await prisma.$queryRaw(Prisma.sql`
+                SELECT id, "chunkKey" , "sourceType", "sourceKey", "sourceId", "sourceLabel", content, metadata,ebbedding, "isDeleted", "createdAt", "updatedAt", 1 - (embedding <=> CAST(${vectorLiteral} AS vector)) AS similarity 
+                                FROM "document_embeddings"
+                                WHERE "isDeleted" = false
+                                ${sourceType ? Prisma.sql`AND "sourceType" = 
+                                ${sourceType}` : Prisma.empty} ORDER BY embedding <=> CAST(${vectorLiteral} AS vector) LIMIT ${limit};
+                `)
+            return results
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async generateAnswer(query: string, limit: number = 5, sourceKeys?: string, asJson: boolean = false) {
+        {
+            try {
+                const relevent = await this.retiveRelevantDocuments(query, limit, sourceKeys);
+                console.log("Relevant documents retrieved: ", relevent)
+            }
+            catch (error) {
+                console.log("Error generating answer: ", error)
+                throw error
+            }
+        }
+
     }
 }
