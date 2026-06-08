@@ -17,7 +17,7 @@ export class LLMService {
             throw new AppError(status.NOT_FOUND, "OPENROUTER_LLM_MODEL is not set");
         }
     }
-    async generateAnswer(prompt: string, query: string, context: string[] = [], asJson: boolean = false) {
+    async generateResponse(prompt: string, query: string, context: string[] = [], asJson: boolean = false) {
         try {
             //* Combind context with prompt for RAG
             let fullPrompt = context.length > 0 ? `Context information:\n${context.join("\n/n")}\n\nQuestion : {prompt}\n\nAnswer based on the conext above.` : prompt;

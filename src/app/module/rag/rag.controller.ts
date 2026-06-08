@@ -15,7 +15,7 @@ const ingestDoctor = catchAsync(async (req: Request, res: Response) => {
     })
 })
 const queryRag = catchAsync(async (req: Request, res: Response) => {
-    const { query } = req.body;
+    const { query, limit, sourceType } = req.body;
     if (!query) {
         return sendResposne(res, {
             httpStatusCode: status.BAD_REQUEST,
@@ -23,7 +23,7 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
             message: "Query is required for RAG retrieval",
         })
     }
-    const result = await ragService.generateAnswer();
+    const result = await ragService.generateAnswer(query, limit ?? 5, sourceType, true);
     sendResposne(res, {
         httpStatusCode: status.OK,
         success: true,
@@ -34,4 +34,5 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
 export const RAGController = {
     ingestDoctor,
     queryRag
+
 }
