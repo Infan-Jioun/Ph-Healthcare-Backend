@@ -31,8 +31,18 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
         data: result
     })
 })
+const getStats = catchAsync(async (req: Request, res: Response) => {
+    const result = await ragService.getStats()
+    sendResposne(res, {
+        success: true,
+        httpStatusCode: status.OK,
+        message: "Rag stats retrieved successfully ",
+        data: result
+    })
+})
 export const RAGController = {
     ingestDoctor,
-    queryRag
+    queryRag,
+    getStats
 
 }
