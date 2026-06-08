@@ -3,9 +3,9 @@ import { Prisma } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 import { EmbeddingService } from "./rag.embedding.service"
 
-const toVectorLiteral = (vector: number[]) => {
-    return `[${vector.join(", ")}]`
-}
+// const toVectorLiteral = (vector: number[]) => {
+//     return `[${vector.join(", ")}]`
+// }
 
 export class IndexingService {
     private embeddingService: EmbeddingService
@@ -23,47 +23,49 @@ export class IndexingService {
     ) {
         try {
             const embedding = await this.embeddingService.generateEmbedding(content);
-            const vectorLiteral = toVectorLiteral(embedding);
+            const vectorLiteral = `[${embedding.join(",")}]`;
 
             await prisma.$executeRaw(Prisma.sql`
-                INSERT INTO "document_embeddings" (
-                    "id",
-                    "chunkKey",
-                    "sourceKey",
-                    "sourceId",
-                    "sourceLabel",
-                    "content",
-                    "embedding",
-                    "metadata",
-                    "updatedAt"
-                ) VALUES (
-                    ${Prisma.raw("gen_random_uuid()")},
-                    ${chunkKey},
-                    ${sourceKey},
-                    ${sourceId},
-                    ${sourceLabel || null},
-                    ${content},
-                    CAST(${vectorLiteral} AS vector),
-                    ${JSON.stringify(metaData || {})}::jsonb,
-                    NOW()
-                )
-                ON CONFLICT ("chunkKey") DO UPDATE SET
-                    "sourceKey" = EXCLUDED."sourceKey",
-                    "sourceId" = EXCLUDED."sourceId",
-                    "content" = EXCLUDED."content",
-                    "embedding" = EXCLUDED."embedding",
-                    "metadata" = EXCLUDED."metadata",
-                    "isDeleted" = false,
-                    "deletedAt" = null,
-                    "updatedAt" = NOW()
-            `);
+            INSERT INTO "document_embeddings" (
+                "id",
+                "chunkKey",
+                "sourceKey",
+                "sourceType",
+                "sourceId",
+                "sourceLabel",
+                "content",
+                "embedding",
+                "metadata",
+                "updatedAt"
+            ) VALUES (
+                gen_random_uuid(),
+                ${chunkKey},
+                ${sourceKey},
+                ${sourceKey},
+                ${sourceId},
+                ${sourceLabel ?? null},
+                ${content},
+                ${Prisma.raw(`'${vectorLiteral}'::vector`)},
+                ${JSON.stringify(metaData ?? {})}::jsonb,
+                NOW()
+            )
+            ON CONFLICT ("chunkKey") DO UPDATE SET
+                "sourceKey" = EXCLUDED."sourceKey",
+                "sourceType" = EXCLUDED."sourceType",
+                "sourceId" = EXCLUDED."sourceId",
+                "content" = EXCLUDED."content",
+                "embedding" = EXCLUDED."embedding",
+                "metadata" = EXCLUDED."metadata",
+                "isDeleted" = false,
+                "deletedAt" = null,
+                "updatedAt" = NOW()
+        `);
 
         } catch (error) {
             console.log(error);
             throw error;
         }
     }
-
     async indexDoctorData() {
         try {
             console.log("Fetching doctor data for indexing")
@@ -129,6 +131,6 @@ ${reviewsText || "No reviews yet."}`
             throw error
         }
     }
-  
- 
+
+
 }

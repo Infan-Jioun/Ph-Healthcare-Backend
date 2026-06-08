@@ -8,7 +8,7 @@ export class EmbeddingService {
     private embeddingModel: string;
     constructor() {
         this.apiKey = envVars.OPENROUTER_API_KEY || "";
-        this.embeddingModel = envVars.OPENROUTER_EMBEDDING_MODEL || "nvidia/nemotron-3-super-120b-a12b:free";
+        this.embeddingModel = envVars.OPENROUTER_EMBEDDING_MODEL || "nvidia/llama-nemotron-embed-vl-1b-v2:free";
         if (!this.apiKey) {
             throw new AppError(status.NOT_FOUND, "OPENROUTER_API_KEY is not set");
         }

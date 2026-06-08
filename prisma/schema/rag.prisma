@@ -2,6 +2,7 @@ model DocumentEmbedding {
     id          String                      @id @default(uuid())
     chunkKey    String                      @unique 
     sourceKey   String
+    sourceType  String
     sourceId    String
     sourceLabel String?
     content     String

@@ -20,12 +20,12 @@ export class RAGService {
         return await this.indexingService.indexDoctorData()
     }
 
-async retiveRelevantDocuments(query: string, limit: number = 5, sourceType?: string) {
-    try {
-        const queryEmbedding = await this.embeddingService.generateEmbedding(query);
-        const vectorLiteral = `[${queryEmbedding.join(", ")}]`;
-        
-        const results = await prisma.$queryRaw(Prisma.sql`
+    async retiveRelevantDocuments(query: string, limit: number = 5, sourceType?: string) {
+        try {
+            const queryEmbedding = await this.embeddingService.generateEmbedding(query);
+            const vectorLiteral = `[${queryEmbedding.join(", ")}]`;
+
+            const results = await prisma.$queryRaw(Prisma.sql`
             SELECT 
                 id, "chunkKey", "sourceType", "sourceKey", "sourceId", 
                 "sourceLabel", content, metadata, embedding,  
@@ -37,66 +37,75 @@ async retiveRelevantDocuments(query: string, limit: number = 5, sourceType?: str
             ORDER BY embedding <=> CAST(${vectorLiteral} AS vector) 
             LIMIT ${limit}
         `);
-        
-        return results; 
-        
-    } catch (error) {
-        console.log("Error retrieving documents:", error);
-        return []; 
-    }
-}
 
-async generateAnswer(query: string, limit: number = 5, sourceKeys?: string, asJson: boolean = false) {
-    try {
-        const releventDocs = await this.retiveRelevantDocuments(query, limit, sourceKeys);
+            return results;
 
-
-        if (!Array.isArray(releventDocs) || releventDocs.length === 0) {
-            return {
-                answer: "No relevant documents found.",
-                sources: [],
-                contextUsed: false
-            };
+        } catch (error) {
+            console.log("Error retrieving documents:", error);
+            return [];
         }
+    }
 
-        const context = (releventDocs as any[])
-            .filter((doc: any) => doc.content)
-            .map((doc: any) => doc.content)
-            .join("\n\n");
+    async generateAnswer(query: string, limit: number = 5, sourceKeys?: string, asJson: boolean = false) {
+        try {
+            const releventDocs = await this.retiveRelevantDocuments(query, limit, sourceKeys);
 
-        let answer = await this.llmService.generateResponse(query, context);
-        let parsedAnswer: any = answer;
 
-        if (asJson) {
-            try {
-                if (answer.startsWith("```json")) {
-                    answer = answer.replace(/```json\n?/, "").replace(/```$/, "").trim();
-                } else if (answer.startsWith("```")) {
-                    answer = answer.replace(/```\n?/, "").replace(/```$/, "").trim();
-                }
-                parsedAnswer = JSON.parse(answer);
-            } catch (error) {
-                console.log("JSON parse error:", error);
+            if (!Array.isArray(releventDocs) || releventDocs.length === 0) {
+                return {
+                    answer: "No relevant documents found.",
+                    sources: [],
+                    contextUsed: false
+                };
             }
+
+            const context = (releventDocs as any[])
+                .filter((doc: any) => doc.content)
+                .map((doc: any) => doc.content)
+                .join("\n\n");
+
+            let answer = await this.llmService.generateResponse(query, context);
+            if (!answer || typeof answer !== "string") {
+                console.log("LLM returned empty/invalid response:", answer);
+                return {
+                    answer: "Could not generate an answer.",
+                    sources: [],
+                    contextUsed: false
+                };
+            }
+
+            let parsedAnswer: any = answer;
+
+            if (asJson) {
+                try {
+                    if (answer.startsWith("```json")) {
+                        answer = answer.replace(/```json\n?/, "").replace(/```$/, "").trim();
+                    } else if (answer.startsWith("```")) {
+                        answer = answer.replace(/```\n?/, "").replace(/```$/, "").trim();
+                    }
+                    parsedAnswer = JSON.parse(answer);
+                } catch (error) {
+                    console.log("JSON parse error:", error);
+                }
+            }
+
+            return {
+                answer: parsedAnswer,
+                sources: (releventDocs as any[]).map((doc: any) => ({
+                    id: doc.id,
+                    chunkKey: doc.chunkKey,
+                    sourceType: doc.sourceType,
+                    sourceId: doc.sourceId,
+                    sourceLabel: doc.sourceLabel,
+                    content: doc.content,
+                    similarity: doc.similarity
+                })),
+                contextUsed: context.length > 0
+            };
+
+        } catch (error) {
+            console.log("Error generating answer: ", error);
+            throw error;
         }
-
-        return {
-            answer: parsedAnswer,
-            sources: (releventDocs as any[]).map((doc: any) => ({
-                id: doc.id,
-                chunkKey: doc.chunkKey,
-                sourceType: doc.sourceType,
-                sourceId: doc.sourceId,
-                sourceLabel: doc.sourceLabel,
-                content: doc.content,      
-                similarity: doc.similarity  
-            })),
-            contextUsed: context.length > 0
-        };
-
-    } catch (error) {
-        console.log("Error generating answer: ", error);
-        throw error;
     }
-}
 }
