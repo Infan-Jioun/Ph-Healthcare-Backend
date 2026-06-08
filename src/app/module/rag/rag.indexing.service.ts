@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Prisma } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 import { EmbeddingService } from "./rag.embedding.service"
