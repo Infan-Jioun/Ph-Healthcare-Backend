@@ -150,7 +150,8 @@ ${reviewsText || "No reviews yet."}`
             try {
                 const releventDocs = await this.retiveRelevantDocuments(query, limit, sourceKeys);
                 //* Extract content from documents  for context 
-                const context = releventDocs.filter((doc: any) => doc.content).map((doc : any) => doc.content)
+                const context = releventDocs.filter((doc: any) => doc.content).map((doc : any) => doc.content);
+                let annswer = await this.llmService.
             }
             catch (error) {
                 console.log("Error generating answer: ", error)
