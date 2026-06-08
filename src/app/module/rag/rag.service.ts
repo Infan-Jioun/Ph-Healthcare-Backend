@@ -1,3 +1,4 @@
+import { LLMService } from "./llm.service";
 import { EmbeddingService } from "./rag.embedding.service";
 import { IndexingService } from "./rag.indexing.service";
 
@@ -11,6 +12,6 @@ export class RAGService {
         this.indexingService = new IndexingService();
     }
     async ingestDoctorData() {
-        return await this.indexingService.indexDoctorData() 
+        return await this.indexingService.indexDoctorData()
     }
 }
