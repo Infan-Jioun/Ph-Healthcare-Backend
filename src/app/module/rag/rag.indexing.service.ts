@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma } from "../../../generated/prisma/client"
 import { prisma } from "../../lib/prisma"
 import { EmbeddingService } from "./rag.embedding.service"
@@ -14,10 +15,10 @@ export class IndexingService {
 
     async indexDocument(
         chunkKey: string,
-        sourceKey: string,       
+        sourceKey: string,
         sourceId: string,
         content: string,
-        sourceLabel?: string,    
+        sourceLabel?: string,
         metaData?: Record<string, unknown>
     ) {
         try {
@@ -147,8 +148,9 @@ ${reviewsText || "No reviews yet."}`
     async generateAnswer(query: string, limit: number = 5, sourceKeys?: string, asJson: boolean = false) {
         {
             try {
-                const relevent = await this.retiveRelevantDocuments(query, limit, sourceKeys);
-                console.log("Relevant documents retrieved: ", relevent)
+                const releventDocs = await this.retiveRelevantDocuments(query, limit, sourceKeys);
+                //* Extract content from documents  for context 
+                const context = releventDocs.filter((doc: any) => doc.content).map((doc : any) => doc.content)
             }
             catch (error) {
                 console.log("Error generating answer: ", error)
