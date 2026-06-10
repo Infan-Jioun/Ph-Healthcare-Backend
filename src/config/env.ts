@@ -22,6 +22,7 @@ interface EnvConfig {
         SMTP_FORM: string
     }
     GOOGLE_CLINET_ID: string
+    REDIS_URL: string
     GOOGLE_SECRET: string
     GOOGLE_CALLBACK_URL: string,
     FRONTEND_URL: string,
@@ -76,6 +77,7 @@ const loadEnvVariables = (): EnvConfig => {
         BETTER_AUTH_URL: process.env.BETTER_AUTH_URL as string,
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET as string,
         DATABASE_URL: process.env.DATABASE_URL as string,
+        REDIS_URL: process.env.REDIS_URL as string,
         ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET as string,
         REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET as string,
         ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
