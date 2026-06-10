@@ -1,5 +1,7 @@
 import { createClient, RedisClientType } from "redis";
 import { envVars } from "../../config/env";
+import AppError from "../errorHelper/appError";
+import status from "http-status";
 
 class RedisService {
     private client: RedisClientType | null = null
@@ -31,4 +33,15 @@ class RedisService {
             console.log(error)
         }
     }
+    private ensureConnection(): RedisClientType {
+        if (!this.client) {
+            throw new AppError(status.CONFLICT, "Redis client not initialzed. Call connect() first")
+        }
+        if (!this.connect) {
+            throw new AppError(status.CONFLICT, "Redis is not connected")
+        }
+        return this.client
+    }
+
 }
+export const redisService = new RedisService();
