@@ -4,7 +4,7 @@ import { envVars } from "./config/env";
 
 const boostrap = async () => {
     try {
-        await redisService.connect();
+        await redisService.connect().catch(console.error);
         app.listen(envVars.PORT, () => {
             console.log(`Server is running on http://localhost:${envVars.PORT}`);
         });
